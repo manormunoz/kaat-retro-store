@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
 import 'package:kaat/src/app/controllers/language_controller.dart';
 import 'package:kaat/src/services/game_class.dart';
@@ -92,10 +93,13 @@ class RomsListController extends GetxController {
     try {
       final ss = ScreenScraperService();
       final languageController = Get.find<LanguageController>();
+      final devId = dotenv.env['SCREENSCRAPER_DEVUSER'];
+      final devPassword = dotenv.env['SCREENSCRAPER_DEVPASSWORD'];
+      final softName = dotenv.env['SCREENSCRAPER_SOFTNAME'];
       ss.configureDev(
-        devId: '*****',
-        devPassword: '********',
-        softName: 'kaat',
+        devId: devId!,
+        devPassword: devPassword!,
+        softName: softName!,
       );
       var clearName = clearGameName(name);
       final r = await ss.searchGames(clearName, systemId: systemId);
