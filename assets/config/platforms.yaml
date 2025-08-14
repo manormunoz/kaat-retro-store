@@ -1,0 +1,229 @@
+# --- NINTENDO ---
+nes:
+  platform_name: "Nintendo Entertainment System (Headered)"
+  platform_abbr: "nes"
+  platform_logo: "https://cdn.jsdelivr.net/gh/libretro/retroarch-assets@master/xmb/flatux/png/Nintendo%20-%20Nintendo%20Entertainment%20System.png"
+  url: "https://myrient.erista.me/files/No-Intro/Nintendo%20-%20Nintendo%20Entertainment%20System%20(Headered)/"
+  roms_boxarts: "https://cdn.jsdelivr.net/gh/libretro-thumbnails/Nintendo_-_Nintendo_Entertainment_System@master/Named_Boxarts/"
+  roms_logos: "https://cdn.jsdelivr.net/gh/libretro-thumbnails/Nintendo_-_Nintendo_Entertainment_System@master/Named_Logos/"
+  ssSystemId: 3
+
+snes:
+  platform_name: "Super Nintendo Entertainment System"
+  platform_abbr: "snes"
+  platform_logo: "https://cdn.jsdelivr.net/gh/libretro/retroarch-assets@master/xmb/flatux/png/Nintendo%20-%20Super%20Nintendo%20Entertainment%20System.png"
+  url: "https://myrient.erista.me/files/No-Intro/Nintendo%20-%20Super%20Nintendo%20Entertainment%20System/"
+  roms_boxarts: "https://cdn.jsdelivr.net/gh/libretro-thumbnails/Nintendo_-_Super_Nintendo_Entertainment_System@master/Named_Boxarts/"
+  roms_logos: "https://cdn.jsdelivr.net/gh/libretro-thumbnails/Nintendo_-_Super_Nintendo_Entertainment_System@master/Named_Logos/"
+  ssSystemId: 4
+
+n64:
+  platform_name: "Nintendo 64 (BigEndian)"
+  platform_abbr: "n64"
+  platform_logo: "https://cdn.jsdelivr.net/gh/libretro/retroarch-assets@master/xmb/flatux/png/Nintendo%20-%20Nintendo%2064.png"
+  url: "https://myrient.erista.me/files/No-Intro/Nintendo%20-%20Nintendo%2064%20(BigEndian)/"
+  roms_boxarts: "https://cdn.jsdelivr.net/gh/libretro-thumbnails/Nintendo_-_Nintendo_64@master/Named_Boxarts/"
+  roms_logos: "https://cdn.jsdelivr.net/gh/libretro-thumbnails/Nintendo_-_Nintendo_64@master/Named_Logos/"
+  ssSystemId: 14
+
+gb:
+  platform_name: "Game Boy"
+  platform_abbr: "gb"
+  platform_logo: "https://cdn.jsdelivr.net/gh/libretro/retroarch-assets@master/xmb/flatux/png/Nintendo%20-%20Game%20Boy.png"
+  url: "https://myrient.erista.me/files/No-Intro/Nintendo%20-%20Game%20Boy/"
+  roms_boxarts: "https://cdn.jsdelivr.net/gh/libretro-thumbnails/Nintendo_-_Game_Boy@master/Named_Boxarts/"
+  roms_logos: "https://cdn.jsdelivr.net/gh/libretro-thumbnails/Nintendo_-_Game_Boy@master/Named_Logos/"
+  ssSystemId: 9
+
+gbc:
+  platform_name: "Game Boy Color"
+  platform_abbr: "gbc"
+  platform_logo: "https://cdn.jsdelivr.net/gh/libretro/retroarch-assets@master/xmb/flatux/png/Nintendo%20-%20Game%20Boy%20Color.png"
+  url: "https://myrient.erista.me/files/No-Intro/Nintendo%20-%20Game%20Boy%20Color/"
+  roms_boxarts: "https://cdn.jsdelivr.net/gh/libretro-thumbnails/Nintendo_-_Game_Boy_Color@master/Named_Boxarts/"
+  roms_logos: "https://cdn.jsdelivr.net/gh/libretro-thumbnails/Nintendo_-_Game_Boy_Color@master/Named_Logos/"
+  ssSystemId: 10
+
+gba:
+  platform_name: "Game Boy Advance"
+  platform_abbr: "gba"
+  platform_logo: "https://cdn.jsdelivr.net/gh/libretro/retroarch-assets@master/xmb/flatux/png/Nintendo%20-%20Game%20Boy%20Advance.png"
+  url: "https://myrient.erista.me/files/No-Intro/Nintendo%20-%20Game%20Boy%20Advance/"
+  roms_boxarts: "https://cdn.jsdelivr.net/gh/libretro-thumbnails/Nintendo_-_Game_Boy_Advance@master/Named_Boxarts/"
+  roms_logos: "https://cdn.jsdelivr.net/gh/libretro-thumbnails/Nintendo_-_Game_Boy_Advance@master/Named_Logos/"
+  ssSystemId: 12
+
+nds:
+  platform_name: "Nintendo DS (Decrypted)"
+  platform_abbr: "nds"
+  platform_logo: "https://cdn.jsdelivr.net/gh/libretro/retroarch-assets@master/xmb/flatux/png/Nintendo%20-%20Nintendo%20DS.png"
+  url: "https://myrient.erista.me/files/No-Intro/Nintendo%20-%20Nintendo%20DS%20(Decrypted)/"
+  roms_boxarts: "https://cdn.jsdelivr.net/gh/libretro-thumbnails/Nintendo_-_Nintendo_DS@master/Named_Boxarts/"
+  roms_logos: "https://cdn.jsdelivr.net/gh/libretro-thumbnails/Nintendo_-_Nintendo_DS@master/Named_Logos/"
+  ssSystemId: 15
+
+n3ds:
+  platform_name: "Nintendo 3DS (Decrypted)"
+  platform_abbr: "n3ds"
+  platform_logo: "https://cdn.jsdelivr.net/gh/libretro/retroarch-assets@master/xmb/flatux/png/Nintendo%20-%20Nintendo%203DS.png"
+  url: "https://myrient.erista.me/files/No-Intro/Nintendo%20-%20Nintendo%203DS%20(Decrypted)/"
+  roms_boxarts: "https://cdn.jsdelivr.net/gh/libretro-thumbnails/Nintendo_-_Nintendo_3DS@master/Named_Boxarts/"
+  roms_logos: "https://cdn.jsdelivr.net/gh/libretro-thumbnails/Nintendo_-_Nintendo_3DS@master/Named_Logos/"
+  ssSystemId: 17
+
+gc:
+  platform_name: "GameCube (NKit RVZ)"
+  platform_abbr: "gc"
+  platform_logo: "https://cdn.jsdelivr.net/gh/libretro/retroarch-assets@master/xmb/flatux/png/Nintendo%20-%20GameCube.png"
+  url: "https://myrient.erista.me/files/Redump/Nintendo%20-%20GameCube%20-%20NKit%20RVZ%20[zstd-19-128k]/"
+  roms_boxarts: "https://cdn.jsdelivr.net/gh/libretro-thumbnails/Nintendo_-_GameCube@master/Named_Boxarts/"
+  roms_logos: "https://cdn.jsdelivr.net/gh/libretro-thumbnails/Nintendo_-_GameCube@master/Named_Logos/"
+  ssSystemId: 13
+
+wii:
+  platform_name: "Wii (NKit RVZ)"
+  platform_abbr: "wii"
+  platform_logo: "https://cdn.jsdelivr.net/gh/libretro/retroarch-assets@master/xmb/flatux/png/Nintendo%20-%20Wii.png"
+  url: "https://myrient.erista.me/files/Redump/Nintendo%20-%20Wii%20-%20NKit%20RVZ%20[zstd-19-128k]/"
+  roms_boxarts: "https://cdn.jsdelivr.net/gh/libretro-thumbnails/Nintendo_-_Wii@master/Named_Boxarts/"
+  roms_logos: "https://cdn.jsdelivr.net/gh/libretro-thumbnails/Nintendo_-_Wii@master/Named_Logos/"
+  ssSystemId: 16
+
+# --- SEGA ---
+mastersystem:
+  platform_name: "Sega Master System - Mark III"
+  platform_abbr: "mastersystem"
+  platform_logo: "https://cdn.jsdelivr.net/gh/libretro/retroarch-assets@master/xmb/flatux/png/Sega%20-%20Master%20System%20-%20Mark%20III.png"
+  url: "https://myrient.erista.me/files/No-Intro/Sega%20-%20Master%20System%20-%20Mark%20III/"
+  roms_boxarts: "https://cdn.jsdelivr.net/gh/libretro-thumbnails/Sega_-_Master_System_-_Mark_III@master/Named_Boxarts/"
+  roms_logos: "https://cdn.jsdelivr.net/gh/libretro-thumbnails/Sega_-_Master_System_-_Mark_III@master/Named_Logos/"
+  ssSystemId: 2
+
+megadrive:
+  platform_name: "Sega Mega Drive - Genesis"
+  platform_abbr: "megadrive"
+  platform_logo: "https://cdn.jsdelivr.net/gh/libretro/retroarch-assets@master/xmb/flatux/png/Sega%20-%20Mega%20Drive%20-%20Genesis.png"
+  url: "https://myrient.erista.me/files/No-Intro/Sega%20-%20Mega%20Drive%20-%20Genesis/"
+  roms_boxarts: "https://cdn.jsdelivr.net/gh/libretro-thumbnails/Sega_-_Mega_Drive_-_Genesis@master/Named_Boxarts/"
+  roms_logos: "https://cdn.jsdelivr.net/gh/libretro-thumbnails/Sega_-_Mega_Drive_-_Genesis@master/Named_Logos/"
+  ssSystemId: 1
+
+gamegear:
+  platform_name: "Sega Game Gear"
+  platform_abbr: "gamegear"
+  platform_logo: "https://cdn.jsdelivr.net/gh/libretro/retroarch-assets@master/xmb/flatux/png/Sega%20-%20Game%20Gear.png"
+  url: "https://myrient.erista.me/files/No-Intro/Sega%20-%20Game%20Gear/"
+  roms_boxarts: "https://cdn.jsdelivr.net/gh/libretro-thumbnails/Sega_-_Game_Gear@master/Named_Boxarts/"
+  roms_logos: "https://cdn.jsdelivr.net/gh/libretro-thumbnails/Sega_-_Game_Gear@master/Named_Logos/"
+  ssSystemId: 21
+
+sega32x:
+  platform_name: "Sega 32X - Megadrive 32x"
+  platform_abbr: "sega32x"
+  platform_logo: "https://cdn.jsdelivr.net/gh/libretro/retroarch-assets@master/xmb/flatux/png/Sega%20-%2032X.png"
+  url: "https://myrient.erista.me/files/No-Intro/Sega%20-%2032X/"
+  roms_boxarts: "https://cdn.jsdelivr.net/gh/libretro-thumbnails/Sega_-_32X@master/Named_Boxarts/"
+  roms_logos: "https://cdn.jsdelivr.net/gh/libretro-thumbnails/Sega_-_32X@master/Named_Logos/"
+  ssSystemId: 3
+
+saturn:
+  platform_name: "Sega Saturn"
+  platform_abbr: "saturn"
+  platform_logo: "https://cdn.jsdelivr.net/gh/libretro/retroarch-assets@master/xmb/flatux/png/Sega%20-%20Saturn.png"
+  url: "https://myrient.erista.me/files/Redump/Sega%20-%20Saturn/"
+  roms_boxarts: "https://cdn.jsdelivr.net/gh/libretro-thumbnails/Sega_-_Saturn@master/Named_Boxarts/"
+  roms_logos: "https://cdn.jsdelivr.net/gh/libretro-thumbnails/Sega_-_Saturn@master/Named_Logos/"
+  ssSystemId: 22
+
+dreamcast:
+  platform_name: "Sega Dreamcast (GDI)"
+  platform_abbr: "dreamcast"
+  platform_logo: "https://cdn.jsdelivr.net/gh/libretro/retroarch-assets@master/xmb/flatux/png/Sega%20-%20Dreamcast.png"
+  url: "https://myrient.erista.me/files/Redump/Sega%20-%20Dreamcast%20-%20GDI%20Files/"
+  roms_boxarts: "https://cdn.jsdelivr.net/gh/libretro-thumbnails/Sega_-_Dreamcast@master/Named_Boxarts/"
+  roms_logos: "https://cdn.jsdelivr.net/gh/libretro-thumbnails/Sega_-_Dreamcast@master/Named_Logos/"
+  ssSystemId: 23
+
+# --- SONY ---
+psx:
+  platform_name: "Playstation 1"
+  platform_abbr: "psx"
+  platform_logo: "https://cdn.jsdelivr.net/gh/libretro/retroarch-assets@master/xmb/flatux/png/Sony%20-%20PlayStation.png"
+  url: "https://myrient.erista.me/files/Redump/Sony%20-%20PlayStation/"
+  roms_boxarts: "https://cdn.jsdelivr.net/gh/libretro-thumbnails/Sony_-_PlayStation@master/Named_Boxarts/"
+  roms_logos: "https://cdn.jsdelivr.net/gh/libretro-thumbnails/Sony_-_PlayStation@master/Named_Logos/"
+  ssSystemId: 57
+
+ps2:
+  platform_name: "PlayStation 2"
+  platform_abbr: "ps2"
+  platform_logo: "https://cdn.jsdelivr.net/gh/libretro/retroarch-assets@master/xmb/flatux/png/Sony%20-%20PlayStation%202.png"
+  url: "https://myrient.erista.me/files/Redump/Sony%20-%20PlayStation%202/"
+  roms_boxarts: "https://cdn.jsdelivr.net/gh/libretro-thumbnails/Sony_-_PlayStation_2@master/Named_Boxarts/"
+  roms_logos: "https://cdn.jsdelivr.net/gh/libretro-thumbnails/Sony_-_PlayStation_2@master/Named_Logos/"
+  ssSystemId: 58
+
+psp:
+  platform_name: "PlayStation Portable"
+  platform_abbr: "psp"
+  platform_logo: "https://cdn.jsdelivr.net/gh/libretro/retroarch-assets@master/xmb/flatux/png/Sony%20-%20PlayStation%20Portable.png"
+  url: "https://myrient.erista.me/files/Redump/Sony%20-%20PlayStation%20Portable/"
+  roms_boxarts: "https://cdn.jsdelivr.net/gh/libretro-thumbnails/Sony_-_PlayStation_Portable@master/Named_Boxarts/"
+  roms_logos: "https://cdn.jsdelivr.net/gh/libretro-thumbnails/Sony_-_PlayStation_Portable@master/Named_Logos/"
+  ssSystemId: 61
+
+psvita:
+  platform_name: "PlayStation Vita"
+  platform_abbr: "psvita"
+  platform_logo: "https://cdn.jsdelivr.net/gh/libretro/retroarch-assets@master/xmb/flatux/png/Sony%20-%20PlayStation%20Vita.png"
+  url: "https://myrient.erista.me/files/No-Intro/Sony%20-%20PlayStation%20Vita%20(Decrypted)/"
+  roms_boxarts: "https://cdn.jsdelivr.net/gh/libretro-thumbnails/Sony_-_PlayStation_Vita@master/Named_Boxarts/"
+  roms_logos: "https://cdn.jsdelivr.net/gh/libretro-thumbnails/Sony_-_PlayStation_Vita@master/Named_Logos/"
+  ssSystemId: 62
+
+# --- NEO GEO ---
+neogeo:
+  platform_name: "SNK - Neo Geo"
+  platform_abbr: "neogeo"
+  platform_logo: "https://cdn.jsdelivr.net/gh/libretro/retroarch-assets@master/xmb/flatux/png/SNK%20-%20Neo%20Geo.png"
+  url: "https://myrient.erista.me/files/No-Intro/SNK%20-%20Neo%20Geo/"
+  roms_boxarts: "https://cdn.jsdelivr.net/gh/libretro-thumbnails/SNK_-_Neo_Geo@master/Named_Boxarts/"
+  roms_logos: "https://cdn.jsdelivr.net/gh/libretro-thumbnails/SNK_-_Neo_Geo@master/Named_Logos/"
+  ssSystemId: 142
+
+neogeocd:
+  platform_name: "SNK - Neo Geo CD"
+  platform_abbr: "neogeocd"
+  platform_logo: "https://cdn.jsdelivr.net/gh/libretro/retroarch-assets@master/xmb/flatux/png/SNK%20-%20Neo%20Geo%20CD.png"
+  url: "https://myrient.erista.me/files/Redump/SNK%20-%20Neo%20Geo%20CD/"
+  roms_boxarts: "https://cdn.jsdelivr.net/gh/libretro-thumbnails/SNK_-_Neo_Geo_CD@master/Named_Boxarts/"
+  roms_logos: "https://cdn.jsdelivr.net/gh/libretro-thumbnails/SNK_-_Neo_Geo_CD@master/Named_Logos/"
+  ssSystemId: 70
+
+ngp:
+  platform_name: "SNK - Neo Geo Pocket"
+  platform_abbr: "ngp"
+  platform_logo: "https://cdn.jsdelivr.net/gh/libretro/retroarch-assets@master/xmb/flatux/png/SNK%20-%20Neo%20Geo%20Pocket.png"
+  url: "https://myrient.erista.me/files/No-Intro/SNK%20-%20NeoGeo%20Pocket/"
+  roms_boxarts: "https://cdn.jsdelivr.net/gh/libretro-thumbnails/SNK_-_Neo_Geo_Pocket@master/Named_Boxarts/"
+  roms_logos: "https://cdn.jsdelivr.net/gh/libretro-thumbnails/SNK_-_Neo_Geo_Pocket@master/Named_Logos/"
+  ssSystemId: 25
+
+ngpc:
+  platform_name: "SNK - Neo Geo Pocket Color"
+  platform_abbr: "ngpc"
+  platform_logo: "https://cdn.jsdelivr.net/gh/libretro/retroarch-assets@master/xmb/flatux/png/SNK%20-%20Neo%20Geo%20Pocket%20Color.png"
+  url: "https://myrient.erista.me/files/No-Intro/SNK%20-%20NeoGeo%20Pocket%20Color/"
+  roms_boxarts: "https://cdn.jsdelivr.net/gh/libretro-thumbnails/SNK_-_Neo_Geo_Pocket_Color@master/Named_Boxarts/"
+  roms_logos: "https://cdn.jsdelivr.net/gh/libretro-thumbnails/SNK_-_Neo_Geo_Pocket_Color@master/Named_Logos/"
+  ssSystemId: 82
+
+# --- ARCADE / MAME ---
+mame:
+  platform_name: "Multiple Arcade Machine Emulator (MAME 0.256 Merged)"
+  platform_abbr: "mame"
+  platform_logo: "https://cdn.jsdelivr.net/gh/libretro/retroarch-assets@master/xmb/flatux/png/MAME.png"
+  url: "https://myrient.erista.me/files/Internet%20Archive/rompacker/mame-chds-roms-extras-complete/MAME%200.256%20ROMs%20(merged)/"
+  roms_boxarts: "https://cdn.jsdelivr.net/gh/libretro-thumbnails/MAME@master/Named_Boxarts/"
+  roms_logos: "https://cdn.jsdelivr.net/gh/libretro-thumbnails/MAME@master/Named_Logos/"
+  ssSystemId: 75

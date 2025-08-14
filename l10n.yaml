@@ -1,0 +1,4 @@
+enabled: true
+arb-dir: lib/l10n
+template-arb-file: intl_en.arb
+class_name: AppLocalizations
