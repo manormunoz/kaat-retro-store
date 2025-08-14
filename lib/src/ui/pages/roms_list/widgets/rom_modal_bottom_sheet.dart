@@ -85,7 +85,7 @@ class RomModalBottomSheet extends StatelessWidget {
 
                             const SizedBox(height: 2),
                             Text(
-                              '${game?.publisher}/${game?.developer}',
+                              '${game?.publisher ?? 'Unknown'}/${game?.developer ?? 'Unknown'}',
                               style: Theme.of(context).textTheme.bodyMedium
                                   ?.copyWith(
                                     fontWeight: FontWeight.bold,
