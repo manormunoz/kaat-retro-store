@@ -2,10 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
+import 'package:kaat/l10n/app_localizations.dart';
 import 'package:kaat/src/app/controllers/language_controller.dart';
 import 'package:kaat/src/services/game_class.dart';
 import 'package:kaat/src/services/myerient_service.dart';
 import 'package:kaat/src/services/screenscraper_service.dart';
+import 'package:kaat/src/ui/pages/config/config_controller.dart';
+import 'package:kaat/src/ui/widgets/app_snackbar/app_snackbar.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class RomsListController extends GetxController {
@@ -89,6 +93,8 @@ class RomsListController extends GetxController {
     return name;
   }
 
+  final _box = GetStorage();
+
   Future<Game> screenScrapper(String name, int systemId) async {
     try {
       final ss = ScreenScraperService();
@@ -96,11 +102,17 @@ class RomsListController extends GetxController {
       final devId = dotenv.env['SCREENSCRAPER_DEVUSER'];
       final devPassword = dotenv.env['SCREENSCRAPER_DEVPASSWORD'];
       final softName = dotenv.env['SCREENSCRAPER_SOFTNAME'];
+      final ssid = _box.read<String?>(ConfigController.kUser);
+      final ssPassword = _box.read<String?>(ConfigController.kPass);
+      debugPrint('----------------username---------------------');
       ss.configureDev(
         devId: devId!,
         devPassword: devPassword!,
         softName: softName!,
       );
+      if (ssid != null && ssPassword != null) {
+        ss.configureUser(ssid: ssid, ssPassword: ssPassword);
+      }
       var clearName = clearGameName(name);
       final r = await ss.searchGames(clearName, systemId: systemId);
       final items = (r['response']?['jeux'] ?? r['jeux'] ?? []) as List;
@@ -122,6 +134,8 @@ class RomsListController extends GetxController {
       return game;
     } catch (err) {
       debugPrint('searchGames error');
+      err.printError();
+      Get.showSnackbar(AppSnackbar(SnackbarType.danger, err.toString()));
       rethrow;
     }
   }

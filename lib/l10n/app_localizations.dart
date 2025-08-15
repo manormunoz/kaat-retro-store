@@ -253,6 +253,54 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Link copied!'**
   String get linkCopied;
+
+  /// No description provided for @ssConfigTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Set up your ScreenScraper credentials'**
+  String get ssConfigTitle;
+
+  /// No description provided for @ssUsernameLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Username (ssid)'**
+  String get ssUsernameLabel;
+
+  /// No description provided for @ssPasswordLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Password (sspassword)'**
+  String get ssPasswordLabel;
+
+  /// No description provided for @ssRememberDevice.
+  ///
+  /// In en, this message translates to:
+  /// **'Remember on this device'**
+  String get ssRememberDevice;
+
+  /// No description provided for @ssClearedMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Credentials removed'**
+  String get ssClearedMessage;
+
+  /// No description provided for @ssSavedMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Credentials updated'**
+  String get ssSavedMessage;
+
+  /// No description provided for @ssClearButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear'**
+  String get ssClearButton;
+
+  /// No description provided for @ssSaveButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Save'**
+  String get ssSaveButton;
 }
 
 class _AppLocalizationsDelegate

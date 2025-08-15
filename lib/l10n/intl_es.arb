@@ -25,5 +25,13 @@
     "romNoMetadata": "Sin metadata",
     "openLink": "Abrir Link",
     "copyLink": "Copiar Link",
-    "linkCopied": "!Link copiado!"
+    "linkCopied": "!Link copiado!",
+    "ssConfigTitle": "Configura tus credenciales de ScreenScraper",
+    "ssUsernameLabel": "Usuario (ssid)",
+    "ssPasswordLabel": "Contraseña (sspassword)",
+    "ssRememberDevice": "Recordar en este dispositivo",
+    "ssClearedMessage": "Credenciales eliminadas",
+    "ssSavedMessage": "Credenciales actualizadas",
+    "ssClearButton": "Limpiar",
+    "ssSaveButton": "Guardar"
 }

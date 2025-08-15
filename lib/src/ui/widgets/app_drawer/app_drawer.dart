@@ -42,7 +42,7 @@ class AppDrawer extends StatelessWidget {
                               child: Align(
                                 alignment: Alignment.centerRight,
                                 child: IconButton(
-                                  onPressed: () => Navigator.pop(context),
+                                  onPressed: () => Get.back(),
                                   icon: Icon(
                                     Icons.close,
                                     color: Theme.of(context).hintColor,
@@ -102,9 +102,26 @@ class AppDrawer extends StatelessWidget {
                     vertical: 3,
                   ),
                   child: ListTile(
+                    leading: Icon(Icons.settings),
+                    title: Text(AppLocalizations.of(context)!.configuration),
+                    onTap: () {
+                      Get.back();
+                      Get.toNamed(RouteNames.config);
+                    },
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 5.0,
+                    vertical: 3,
+                  ),
+                  child: ListTile(
                     leading: Icon(Icons.favorite_rounded, color: Colors.red),
                     title: Text(AppLocalizations.of(context)!.creditsTitle),
-                    onTap: () => Get.toNamed(RouteNames.credits),
+                    onTap: () {
+                      Get.back();
+                      Get.toNamed(RouteNames.credits);
+                    },
                   ),
                 ),
               ],

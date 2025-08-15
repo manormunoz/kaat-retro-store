@@ -6,4 +6,5 @@ class RouteNames {
   static const String home = '/home';
   static const String romsList = '/roms-list';
   static const String credits = '/credits';
+  static const String config = '/config';
 }

@@ -89,4 +89,28 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get linkCopied => '!Link copiado!';
+
+  @override
+  String get ssConfigTitle => 'Configura tus credenciales de ScreenScraper';
+
+  @override
+  String get ssUsernameLabel => 'Usuario (ssid)';
+
+  @override
+  String get ssPasswordLabel => 'Contraseña (sspassword)';
+
+  @override
+  String get ssRememberDevice => 'Recordar en este dispositivo';
+
+  @override
+  String get ssClearedMessage => 'Credenciales eliminadas';
+
+  @override
+  String get ssSavedMessage => 'Credenciales actualizadas';
+
+  @override
+  String get ssClearButton => 'Limpiar';
+
+  @override
+  String get ssSaveButton => 'Guardar';
 }

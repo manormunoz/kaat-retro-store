@@ -24,5 +24,13 @@
     "romNoMetadata": "Metadata not found",
     "openLink": "Open Link",
     "copyLink": "Copy Link",
-    "linkCopied": "Link copied!"
+    "linkCopied": "Link copied!",
+    "ssConfigTitle": "Set up your ScreenScraper credentials",
+    "ssUsernameLabel": "Username (ssid)",
+    "ssPasswordLabel": "Password (sspassword)",
+    "ssRememberDevice": "Remember on this device",
+    "ssClearedMessage": "Credentials removed",
+    "ssSavedMessage": "Credentials updated",
+    "ssClearButton": "Clear",
+    "ssSaveButton": "Save"
 }

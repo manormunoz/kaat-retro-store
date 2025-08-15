@@ -1,3 +1,5 @@
+import 'package:kaat/src/ui/pages/config/config_binding.dart';
+import 'package:kaat/src/ui/pages/config/config_page.dart';
 import 'package:kaat/src/ui/pages/credits/credits_binding.dart';
 import 'package:kaat/src/ui/pages/credits/credits_page.dart';
 import 'package:kaat/src/ui/pages/home/home_binding.dart';
@@ -44,6 +46,12 @@ class RoutePages {
         name: RouteNames.credits,
         page: () => const CreditsPage(),
         binding: const CreditsBinding(),
+        transition: Transition.noTransition,
+      ),
+      GetPage(
+        name: RouteNames.config,
+        page: () => const ConfigPage(),
+        binding: const ConfigBinding(),
         transition: Transition.noTransition,
       ),
     ];
