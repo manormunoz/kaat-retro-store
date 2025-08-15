@@ -79,6 +79,7 @@ flutter:
     - assets/config/platforms.yaml
     - assets/data/mame.json
     - .env
+    - assets/svg/
   #   - images/a_dot_burr.jpeg
   #   - images/a_dot_ham.jpeg
 

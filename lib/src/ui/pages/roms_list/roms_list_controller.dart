@@ -3,7 +3,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
-import 'package:kaat/l10n/app_localizations.dart';
 import 'package:kaat/src/app/controllers/language_controller.dart';
 import 'package:kaat/src/services/db_service.dart';
 import 'package:kaat/src/services/game_class.dart';
@@ -21,6 +20,7 @@ class RomsListController extends GetxController {
   final searchText = ''.obs;
   final searchCtrl = TextEditingController();
   Worker? _debouncer;
+  final _box = GetStorage();
 
   RomsListController();
   @override
@@ -33,6 +33,12 @@ class RomsListController extends GetxController {
       time: const Duration(milliseconds: 300),
     );
     loadRomsList();
+  }
+
+  @override
+  void onClose() {
+    _debouncer?.dispose();
+    super.onClose();
   }
 
   void onSearchChanged(String text) {
@@ -134,8 +140,6 @@ class RomsListController extends GetxController {
     return name;
   }
 
-  final _box = GetStorage();
-
   Future<Game> screenScrapper(String name, int systemId) async {
     try {
       final ss = ScreenScraperService();
@@ -145,7 +149,7 @@ class RomsListController extends GetxController {
       final softName = dotenv.env['SCREENSCRAPER_SOFTNAME'];
       final ssid = _box.read<String?>(ConfigController.kUser);
       final ssPassword = _box.read<String?>(ConfigController.kPass);
-      debugPrint('----------------username---------------------');
+      // debugPrint('----------------username---------------------');
       ss.configureDev(
         devId: devId!,
         devPassword: devPassword!,
