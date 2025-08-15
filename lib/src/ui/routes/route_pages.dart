@@ -22,37 +22,37 @@ class RoutePages {
         name: RouteNames.noConnection,
         page: () => const NoConnectionPage(),
         binding: const NoConnectionBinding(),
-        transition: Transition.noTransition,
+        transition: Transition.cupertino,
       ),
       GetPage(
         name: RouteNames.splash,
         page: () => const SplashPage(),
         binding: const SplashBinding(),
-        transition: Transition.noTransition,
+        transition: Transition.cupertino,
       ),
       GetPage(
         name: RouteNames.home,
         page: () => const HomePage(),
         binding: const HomeBinding(),
-        transition: Transition.noTransition,
+        transition: Transition.cupertino,
       ),
       GetPage(
         name: RouteNames.romsList,
         page: () => const RomsListPage(),
         binding: const RomsListBinding(),
-        transition: Transition.noTransition,
+        transition: Transition.cupertino,
       ),
       GetPage(
         name: RouteNames.credits,
         page: () => const CreditsPage(),
         binding: const CreditsBinding(),
-        transition: Transition.noTransition,
+        transition: Transition.cupertino,
       ),
       GetPage(
         name: RouteNames.config,
         page: () => const ConfigPage(),
         binding: const ConfigBinding(),
-        transition: Transition.noTransition,
+        transition: Transition.cupertino,
       ),
     ];
   }
