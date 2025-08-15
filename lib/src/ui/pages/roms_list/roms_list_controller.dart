@@ -162,8 +162,8 @@ class RomsListController extends GetxController {
         items.first as Map<String, dynamic>,
         languageController.effectiveLocale,
       );
-      // debugPrint('-------------------------------');
-      // debugPrint(game.title);
+      debugPrint('-------------------------------');
+      debugPrint(game.title);
       // debugPrint(game.synopsis);
       // debugPrint(game.box2D);
       // debugPrint(game.logo);
@@ -171,7 +171,7 @@ class RomsListController extends GetxController {
       // debugPrint(game.developer);
       // debugPrint(game.publisher);
       // debugPrint(game.screenshots.first);
-      // debugPrint(game.rating.toString());
+      debugPrint(game.ratingOutOf5.toString());
       return game;
     } catch (err) {
       debugPrint('searchGames error');

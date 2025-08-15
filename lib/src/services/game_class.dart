@@ -353,5 +353,13 @@ class Game {
   // }
 
   /// Pasa rating de 0..20 a 0..5
-  double? get ratingOutOf5 => (rating == null) ? null : (rating! / 4.0);
+  double? get ratingOutOf5 {
+    if (rating == null) {
+      return null;
+    }
+    if (rating! > 5) {
+      return rating! / 4.0;
+    }
+    return rating;
+  }
 }

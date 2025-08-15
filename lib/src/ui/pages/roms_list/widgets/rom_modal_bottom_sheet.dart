@@ -93,11 +93,11 @@ class RomModalBottomSheet extends StatelessWidget {
                                   ),
                             ),
                             const SizedBox(height: 8),
-                            game?.rating != null
+                            game?.ratingOutOf5 != null
                                 ? Row(
                                     children: List.generate(5, (i) {
                                       return Icon(
-                                        i < game!.rating!.round()
+                                        i < game!.ratingOutOf5!.round()
                                             ? Icons.star
                                             : Icons.star_border,
                                         color: Colors.amber,
