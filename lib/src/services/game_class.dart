@@ -76,13 +76,13 @@ class Game {
     final developer = _pickLocalizedText(
       candidates: [jeu['developpeur'], resp['developpeur']],
       locale: locale,
-      // fallbackKeys: const ['text'],
+      fallbackKeys: const ['text'],
       defaultValue: 'Unknown',
     );
     final publisher = _pickLocalizedText(
       candidates: [jeu['editeur'], resp['editeur']],
       locale: locale,
-      // fallbackKeys: const ['text'],
+      fallbackKeys: const ['text'],
       defaultValue: 'Unknown',
     );
     final medias = _asList(jeu['medias'] ?? resp['medias'] ?? resp['media']);
@@ -140,13 +140,13 @@ class Game {
     final developer = _pickLocalizedText(
       candidates: [item['developpeur']],
       locale: locale,
-      // fallbackKeys: const ['text'],
+      fallbackKeys: const ['text'],
       defaultValue: 'Unknown',
     );
     final publisher = _pickLocalizedText(
       candidates: [item['editeur']],
       locale: locale,
-      // fallbackKeys: const ['text'],
+      fallbackKeys: const ['text'],
       defaultValue: 'Unknown',
     );
     final medias = _asList(item['medias'] ?? item['media']);

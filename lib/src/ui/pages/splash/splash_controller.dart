@@ -18,7 +18,7 @@ class SplashController extends GetxController {
   Future<void> _init() async {
     message.value = AppLocalizations.of(Get.context!)!.initDb;
     final dbService = DbService();
-    final db = await dbService.database;
+    await dbService.database;
     _loading.value = false;
     Get.offNamed(RouteNames.home);
   }

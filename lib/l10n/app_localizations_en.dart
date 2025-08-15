@@ -83,6 +83,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get romNoMetadata => 'Metadata not found';
 
   @override
+  String get synopsis => 'Synopsis';
+
+  @override
   String get openLink => 'Open Link';
 
   @override

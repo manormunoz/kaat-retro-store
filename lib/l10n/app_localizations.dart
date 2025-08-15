@@ -242,6 +242,12 @@ abstract class AppLocalizations {
   /// **'Metadata not found'**
   String get romNoMetadata;
 
+  /// No description provided for @synopsis.
+  ///
+  /// In en, this message translates to:
+  /// **'Synopsis'**
+  String get synopsis;
+
   /// No description provided for @openLink.
   ///
   /// In en, this message translates to:

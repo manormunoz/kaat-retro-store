@@ -121,16 +121,26 @@ class RomModalBottomSheet extends StatelessWidget {
                     ],
                   ),
                   const SizedBox(height: 16),
-
+                  buttons(context, url),
+                  const SizedBox(height: 8),
                   Text(
-                    game?.synopsis ??
-                        AppLocalizations.of(context)!.romNoMetadata,
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      color: scheme.onSurfaceVariant,
+                    AppLocalizations.of(context)!.synopsis,
+
+                    style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: scheme.onSurface,
                     ),
                   ),
-                  const SizedBox(height: 24),
-                  buttons(context, url),
+                  const SizedBox(height: 4),
+                  SafeArea(
+                    child: Text(
+                      game?.synopsis ??
+                          AppLocalizations.of(context)!.romNoMetadata,
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        color: scheme.onSurfaceVariant,
+                      ),
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -154,34 +164,32 @@ class RomModalBottomSheet extends StatelessWidget {
 
   Widget buttons(BuildContext context, String url) {
     final romsListController = Get.find<RomsListController>();
-    return SafeArea(
-      child: Row(
-        children: [
-          Expanded(
-            child: FilledButton.icon(
-              icon: const Icon(Icons.open_in_browser),
-              label: Text(AppLocalizations.of(context)!.openLink),
-              onPressed: () => romsListController.openMyrient(url),
-            ),
+    return Row(
+      children: [
+        Expanded(
+          child: FilledButton.icon(
+            icon: const Icon(Icons.open_in_browser),
+            label: Text(AppLocalizations.of(context)!.openLink),
+            onPressed: () => romsListController.openMyrient(url),
           ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: OutlinedButton.icon(
-              icon: const Icon(Icons.copy),
-              label: Text(AppLocalizations.of(context)!.copyLink),
-              onPressed: () {
-                Clipboard.setData(ClipboardData(text: url));
-                Get.showSnackbar(
-                  AppSnackbar(
-                    SnackbarType.info,
-                    AppLocalizations.of(context)!.linkCopied,
-                  ),
-                );
-              },
-            ),
+        ),
+        const SizedBox(width: 8),
+        Expanded(
+          child: OutlinedButton.icon(
+            icon: const Icon(Icons.copy),
+            label: Text(AppLocalizations.of(context)!.copyLink),
+            onPressed: () {
+              Clipboard.setData(ClipboardData(text: url));
+              Get.showSnackbar(
+                AppSnackbar(
+                  SnackbarType.info,
+                  AppLocalizations.of(context)!.linkCopied,
+                ),
+              );
+            },
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 
