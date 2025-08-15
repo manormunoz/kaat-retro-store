@@ -1,6 +1,6 @@
 # 🎮 K'aat Retro Store
 
-**K'aat Retro Store** is an **open-source** multiplatform app built with **Flutter** + **GetX** that lets you browse and download retro game ROMs directly from [**Myrient**](https://myrient.erista.me/), enriched with **boxarts, logos, and metadata** from:
+**K'aat Retro Store** is an **open-source** multiplatform (android, windows, mac & linux) app built with **Flutter** + **GetX** that lets you browse and download retro game ROMs directly from [**Myrient**](https://myrient.erista.me/), enriched with **boxarts, logos, and metadata** from:
 
 - **ROM source:** [Myrient](https://myrient.erista.me/) (No‑Intro / Redump organized)
 - [**libretro-thumbnails**](https://github.com/libretro/libretro-thumbnails)  
