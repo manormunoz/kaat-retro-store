@@ -1,4 +1,5 @@
 {
+    "initDb": "Inicializando la base de datos",
     "version": "Versión",
     "configuration": "Configuración",
     "darkTheme": "Tema obscuro",

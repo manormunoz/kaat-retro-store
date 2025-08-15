@@ -12,7 +12,24 @@ class SplashPage extends StatelessWidget {
       body: Center(
         child: Obx(() {
           if (controller.loading) {
-            return const CircularProgressIndicator();
+            return Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const SizedBox(
+                  width: 60.0,
+                  height: 60.0,
+                  child: CircularProgressIndicator(),
+                ),
+                const SizedBox(height: 28),
+                Text(
+                  controller.message.value,
+                  textAlign: TextAlign.center,
+                  style: Theme.of(
+                    context,
+                  ).textTheme.bodySmall!.copyWith(fontSize: 16.0),
+                ),
+              ],
+            );
           }
           return const SizedBox.shrink();
         }),

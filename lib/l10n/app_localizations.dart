@@ -98,6 +98,12 @@ abstract class AppLocalizations {
     Locale('es'),
   ];
 
+  /// No description provided for @initDb.
+  ///
+  /// In en, this message translates to:
+  /// **'Initializing the database'**
+  String get initDb;
+
   /// No description provided for @version.
   ///
   /// In en, this message translates to:
