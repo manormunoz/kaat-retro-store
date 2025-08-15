@@ -31,6 +31,17 @@
 
 ---
 
+## 📅 Upcoming Improvements
+
+We are working on new features and optimizations for future versions:
+
+- 📥 **Direct download from Myrient** *(pending authorization)* to simplify the process and avoid extra steps.  
+- 🎮 **RetroArch compatibility**: option to save ROMs directly into RetroArch’s corresponding folders so they’re ready to play.  
+- 💻 **Optimized view for tablets and desktop computers** with a responsive interface that takes full advantage of larger screens.  
+- ⚡ **Performance improvements** for faster ROM list loading and smoother navigation.  
+
+---
+
 ## 🛠 Useful Commands
 
 ### Generate localization classes
