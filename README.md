@@ -15,6 +15,7 @@
 - **ROM source:** [Myrient](https://myrient.erista.me/) (No‑Intro / Redump organized)
 - **Boxarts & game logos:** [libretro-thumbnails](https://github.com/libretro/libretro-thumbnails) (served via jsDelivr)
 - **Platform logos (FlatUI):** [retroarch-assets](https://github.com/libretro/retroarch-assets) (served via jsDelivr)
+- **Metadata & boxarts** [ScreenScraper](https://www.screenscraper.fr/)  
 - **CDN:** [jsDelivr](https://www.jsdelivr.com/) for fast, cacheable delivery of GitHub‑hosted assets
 
 > **Note:** K'aat Retro Store does **not** host ROMs or images. It provides links to third‑party resources and a YAML map of platform metadata so you can integrate easily with RetroArch and other emulators.
