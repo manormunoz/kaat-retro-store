@@ -112,7 +112,9 @@ class RomsListController extends GetxController {
     roms.assignAll(
       allRoms.where((m) {
         final name = _normalize(m['name']?.toString() ?? '');
-        return name.contains(q);
+        final rom = _normalize(m['rom']?.toString() ?? '');
+
+        return name.contains(q) || (rom.isNotEmpty && rom.contains(q));
       }),
     );
   }
