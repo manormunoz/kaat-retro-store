@@ -37,6 +37,7 @@ class DbService {
   }
 
   FutureOr<void> _onCreate(Database db, int version) async {
+    debugPrint('ENTRA----------------------');
     await db.execute('''
       CREATE TABLE IF NOT EXISTS platforms (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -164,5 +165,36 @@ class DbService {
       });
       debugPrint("✅ MAME roms initialized");
     }
+  }
+
+  Future<Map<String, dynamic>?> getPlatformByAbbr({
+    required String abbr,
+  }) async {
+    final db = await database;
+    final platformDb = await db.rawQuery(
+      'SELECT * FROM platforms WHERE abbr=?',
+      [abbr],
+    );
+    if (platformDb.isNotEmpty) {
+      return platformDb.first as Map<String, dynamic>;
+    }
+    return platformDb.isNotEmpty
+        ? platformDb.first as Map<String, dynamic>
+        : null;
+  }
+
+  Future<Map<String, dynamic>?> getRom({
+    required int platformId,
+    required String rom,
+  }) async {
+    final db = await database;
+    final romDb = await db.rawQuery(
+      'SELECT * FROM roms WHERE platformId=? AND rom=?',
+      [platformId, rom],
+    );
+    if (romDb.isNotEmpty) {
+      return romDb.first as Map<String, dynamic>;
+    }
+    return romDb.isNotEmpty ? romDb.first as Map<String, dynamic> : null;
   }
 }

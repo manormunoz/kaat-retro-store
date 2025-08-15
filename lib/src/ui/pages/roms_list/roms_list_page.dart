@@ -49,6 +49,7 @@ class RomsListPage extends GetView<RomsListController> {
                       itemBuilder: (context, i) {
                         final item = controller.roms[i];
                         final name = item['name']?.toString() ?? '';
+                        final rom = item['rom']?.toString() ?? '';
                         final size = item['size']?.toString() ?? '';
                         final boxart = item['boxart']?.toString() ?? '';
                         final logo = item['logo']?.toString() ?? '';
@@ -63,7 +64,9 @@ class RomsListPage extends GetView<RomsListController> {
                             radius: 5,
                           ),
                           title: Text(name),
-                          subtitle: Text(size),
+                          subtitle: Text(
+                            '${rom.isNotEmpty ? "$rom " : ""} $size',
+                          ),
                           onTap: () {
                             showModalBottomSheet<void>(
                               context: context,

@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:kaat/l10n/app_localizations.dart';
 import 'package:kaat/src/app/controllers/language_controller.dart';
+import 'package:kaat/src/services/db_service.dart';
 import 'package:kaat/src/services/game_class.dart';
 import 'package:kaat/src/services/myerient_service.dart';
 import 'package:kaat/src/services/screenscraper_service.dart';
@@ -38,15 +39,53 @@ class RomsListController extends GetxController {
     searchText.value = text;
   }
 
+  String removeFileExtension(String fileName) {
+    final dotIndex = fileName.lastIndexOf('.');
+    if (dotIndex > 0) {
+      return fileName.substring(0, dotIndex);
+    }
+    return fileName;
+  }
+
   Future<void> loadRomsList() async {
     try {
       loading.value = true;
       final myrient = MyrientService();
       final list = await myrient.listRoms(platform);
-      allRoms.assignAll(list);
-      roms.assignAll(list);
+      if (platform['platform_abbr'] == 'mame') {
+        final dbService = DbService();
+        final dbPlatform = await dbService.getPlatformByAbbr(
+          abbr: platform['platform_abbr'],
+        );
+        for (var rom in list) {
+          final dbRom = await dbService.getRom(
+            platformId: dbPlatform!['id'] as int,
+            rom: clearGameName(rom['name']),
+          );
+          if (dbRom != null) {
+            final logo =
+                '${platform['roms_logos']}${Uri.encodeComponent(removeFileExtension(dbRom['title']))}.png';
+            final boxart =
+                '${platform['roms_boxarts']}${Uri.encodeComponent(removeFileExtension(dbRom['title']))}.png';
+            final r = {
+              ...rom,
+              'name': clearGameName(dbRom['title']),
+              'rom': rom['name'],
+              'logo': logo,
+              'boxart': boxart,
+            };
+            allRoms.add(r);
+            // debugPrint(r.keys.toString());
+          } else {
+            allRoms.add(rom);
+          }
+        }
+      } else {
+        allRoms.assignAll(list);
+      }
+      roms.assignAll(allRoms);
     } catch (e) {
-      debugPrint("Error cargando platforms.yml: $e");
+      debugPrint("loadRomsList Error: $e");
     } finally {
       loading.value = false;
     }
@@ -79,10 +118,10 @@ class RomsListController extends GetxController {
   }
 
   String clearGameName(String fileName) {
-    var name = '';
+    var name = fileName;
     final dotIndex = fileName.lastIndexOf('.');
     if (dotIndex > 0) {
-      name = fileName.substring(0, dotIndex);
+      name = name.substring(0, dotIndex);
     }
     name = name.replaceAll(RegExp(r'\(.*?\)'), '');
     name = name.replaceAll(RegExp(r'\[.*?\]'), '');
@@ -114,6 +153,8 @@ class RomsListController extends GetxController {
         ss.configureUser(ssid: ssid, ssPassword: ssPassword);
       }
       var clearName = clearGameName(name);
+      debugPrint(clearName);
+      debugPrint(systemId.toString());
       final r = await ss.searchGames(clearName, systemId: systemId);
       final items = (r['response']?['jeux'] ?? r['jeux'] ?? []) as List;
 

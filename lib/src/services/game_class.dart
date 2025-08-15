@@ -46,14 +46,14 @@ class Game {
         resp['nom'],
       ],
       locale: locale,
-      fallbackKeys: const ['nom', 'name', 'titre', 'title'],
+      // fallbackKeys: const ['nom', 'name', 'titre', 'title'],
       defaultValue: 'Unknown',
     );
 
     final synopsis = _pickLocalizedText(
       candidates: [jeu['synopsis'], resp['synopsis'], jeu['synopsys']],
       locale: locale,
-      fallbackKeys: const ['synopsis', 'synopsys', 'resume', 'description'],
+      // fallbackKeys: const ['synopsis', 'synopsys', 'resume', 'description'],
       defaultValue: null,
     );
 
@@ -61,7 +61,7 @@ class Game {
       _pickLocalizedText(
         candidates: [jeu['note'], resp['note']],
         locale: locale,
-        fallbackKeys: const ['note', 'text'],
+        // fallbackKeys: const ['note', 'text'],
         defaultValue: null,
       ),
     );
@@ -69,20 +69,20 @@ class Game {
     final date = _pickLocalizedText(
       candidates: [jeu['dates'], resp['dates']],
       locale: locale,
-      fallbackKeys: const ['date', 'dates'],
+      // fallbackKeys: const ['date', 'dates'],
       defaultValue: null,
     );
 
     final developer = _pickLocalizedText(
       candidates: [jeu['developpeur'], resp['developpeur']],
       locale: locale,
-      fallbackKeys: const ['text'],
+      // fallbackKeys: const ['text'],
       defaultValue: 'Unknown',
     );
     final publisher = _pickLocalizedText(
       candidates: [jeu['editeur'], resp['editeur']],
       locale: locale,
-      fallbackKeys: const ['text'],
+      // fallbackKeys: const ['text'],
       defaultValue: 'Unknown',
     );
     final medias = _asList(jeu['medias'] ?? resp['medias'] ?? resp['media']);
@@ -112,14 +112,14 @@ class Game {
     final title = _pickLocalizedText(
       candidates: [item['noms'], item['nom']],
       locale: locale,
-      fallbackKeys: const ['nom', 'name', 'titre', 'title'],
+      // fallbackKeys: const ['nom', 'name', 'titre', 'title'],
       defaultValue: 'Unknown',
     );
 
     final synopsis = _pickLocalizedText(
       candidates: [item['synopsis']],
       locale: locale,
-      fallbackKeys: const ['synopsis', 'description'],
+      // fallbackKeys: const ['synopsis', 'description'],
       defaultValue: null,
     );
 
@@ -127,26 +127,26 @@ class Game {
       _pickLocalizedText(
         candidates: [item['note']],
         locale: locale,
-        fallbackKeys: const ['note', 'text'],
+        // fallbackKeys: const ['note', 'text'],
         defaultValue: null,
       ),
     );
     final date = _pickLocalizedText(
       candidates: [item['dates']],
       locale: locale,
-      fallbackKeys: const ['date', 'dates', 'text'],
+      // fallbackKeys: const ['date', 'dates', 'text'],
       defaultValue: 'Unknown',
     );
     final developer = _pickLocalizedText(
       candidates: [item['developpeur']],
       locale: locale,
-      fallbackKeys: const ['text'],
+      // fallbackKeys: const ['text'],
       defaultValue: 'Unknown',
     );
     final publisher = _pickLocalizedText(
       candidates: [item['editeur']],
       locale: locale,
-      fallbackKeys: const ['text'],
+      // fallbackKeys: const ['text'],
       defaultValue: 'Unknown',
     );
     final medias = _asList(item['medias'] ?? item['media']);
@@ -203,6 +203,7 @@ class Game {
         for (final k in fallbackKeys) {
           if (byLang.containsKey(_norm(k))) return byLang[_norm(k)];
         }
+
         if (byLang.isNotEmpty) return byLang.values.first;
       }
     }
@@ -250,6 +251,20 @@ class Game {
       final en = pick((code) => code == 'en' || code.startsWith('en-'));
       if (en != null) return en;
 
+      var count = 0;
+      var worRegion = false;
+      for (var e in list) {
+        var region = e['region'];
+        if (region == 'wor') {
+          worRegion = true;
+          var item = list.removeAt(count);
+          list.insert(0, item);
+        } else if (!worRegion && region == 'us') {
+          var item = list.removeAt(count);
+          list.insert(0, item);
+        }
+        count++;
+      }
       for (final e in list) {
         if (e is! Map) continue;
         for (final key in [
