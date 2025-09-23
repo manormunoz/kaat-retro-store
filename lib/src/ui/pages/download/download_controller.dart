@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:background_downloader/background_downloader.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:kaat/l10n/app_localizations.dart';
 import 'package:path_provider/path_provider.dart';
 
@@ -14,7 +15,7 @@ class DownloadItem {
     this.localPath,
   });
 
-  final DownloadTask task; // guardamos el DownloadTask
+  final dynamic task; // guardamos el DownloadTask
   double progress; // 0..1
   TaskStatus status;
   String? localPath;
@@ -61,6 +62,7 @@ class DownloadItem {
 class DownloadController extends GetxController {
   final downloads = <String, DownloadItem>{}.obs; // taskId -> item
   late final String _baseDir;
+  final _box = GetStorage();
 
   @override
   Future<void> onInit() async {
@@ -104,7 +106,8 @@ class DownloadController extends GetxController {
         final it = downloads[id];
         if (it != null) {
           it.status = update.status;
-          if (update.status == TaskStatus.complete) {
+          final uri = getSavedFolderUri(it.subdir);
+          if (uri == null && update.status == TaskStatus.complete) {
             // ruta final del archivo (si la necesitas)
             try {
               final path = await update.task.filePath();
@@ -342,22 +345,34 @@ class DownloadController extends GetxController {
     String? filename,
     bool requiresWifi = false,
   }) async {
+    final destUri = await pickFolder(subdir);
     final uri = Uri.parse(url);
     final filenameSfe = filename ??
         (uri.pathSegments.isNotEmpty ? uri.pathSegments.last : 'unknown.file');
 
-    final task = DownloadTask(
-      url: url,
-      filename: filenameSfe,
-      baseDirectory: BaseDirectory.applicationSupport,
-      directory: subdir,
-      updates: Updates.statusAndProgress,
-      requiresWiFi: requiresWifi,
-      allowPause: true,
-      retries: 2,
-    );
-    final localPath = '$_baseDir/$subdir/$filenameSfe';
+    final task = destUri != null
+        ? UriDownloadTask(
+            url: url,
+            directoryUri: destUri,
+            filename: filenameSfe,
+            updates: Updates.statusAndProgress,
+            requiresWiFi: requiresWifi,
+            allowPause: true,
+            retries: 2,
+          )
+        : DownloadTask(
+            url: url,
+            filename: filenameSfe,
+            baseDirectory: BaseDirectory.applicationSupport,
+            directory: subdir,
+            updates: Updates.statusAndProgress,
+            requiresWiFi: requiresWifi,
+            allowPause: true,
+            retries: 2,
+          );
 
+    final localPath = '$_baseDir/$subdir/$filenameSfe';
+    debugPrint(localPath);
     downloads[task.taskId] = DownloadItem(
       task: task,
       progress: 0,
@@ -420,5 +435,34 @@ class DownloadController extends GetxController {
     } catch (_) {
       return null;
     }
+  }
+
+  Future<Uri?> pickFolder(String subdir) async {
+    final cached = getSavedFolderUri(subdir);
+    if (cached != null) {
+      return cached;
+    }
+    // Abre el picker de directorio (Android → SAF, iOS → UIDocumentPicker)
+    final Uri? folderUri = await FileDownloader().uri.pickDirectory(
+          persistedUriPermission: true,
+        );
+
+    if (folderUri != null) {
+      debugPrint('Carpeta elegida: $folderUri');
+      await saveFolderUri(subdir, folderUri);
+      return folderUri;
+    } else {
+      debugPrint('Usuario canceló selección de carpeta');
+      return null;
+    }
+  }
+
+  Future<void> saveFolderUri(String subdir, Uri folderUri) async {
+    await _box.write('downloads_folder_${subdir}_uri', folderUri.toString());
+  }
+
+  Uri? getSavedFolderUri(String subdir) {
+    final uriStr = _box.read<String>('downloads_folder_${subdir}_uri');
+    return uriStr != null ? Uri.parse(uriStr) : null;
   }
 }

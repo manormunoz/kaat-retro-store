@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:kaat/l10n/app_localizations.dart';
 import 'package:kaat/src/ui/pages/download/download_controller.dart';
+import 'package:kaat/src/ui/widgets/app_drawer/app_drawer.dart';
 import 'package:kaat/src/ui/widgets/app_snackbar/app_snackbar.dart';
 import 'package:kaat/src/ui/widgets/principal_app_bar/principal_app_bar.dart';
 
@@ -88,6 +89,7 @@ class DownloadPage extends StatelessWidget {
         },
         child: const Icon(Icons.delete_sweep_rounded),
       ),
+      endDrawer: const AppDrawer(),
     );
   }
 }

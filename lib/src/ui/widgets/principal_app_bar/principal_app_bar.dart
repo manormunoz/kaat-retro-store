@@ -54,17 +54,33 @@ PreferredSize principalAppBar(
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         foregroundColor: Theme.of(context).hintColor,
         actions: [
-          Get.currentRoute != RouteNames.download
-              ? Obx(() {
-                  return AnimatedDownloadButton(
-                    downloadCount:
-                        downloadController.downloadsInProgress.length,
-                    onPressed: () => Get.toNamed(RouteNames.download),
-                  );
-                })
-              : Container(),
+          Obx(() {
+            final count = downloadController.downloadsInProgress.length;
+            final isHiddenRoute = {
+              RouteNames.download,
+              RouteNames.config,
+              RouteNames.credits,
+            }.contains(Get.currentRoute);
+
+            if (isHiddenRoute) {
+              return const SizedBox.shrink();
+            }
+            return AnimatedDownloadButton(
+              downloadCount: count,
+              onPressed: () => Get.toNamed(RouteNames.download),
+            );
+          }),
           Builder(
             builder: (context) {
+              final isHiddenRoute = {
+                RouteNames.download,
+                RouteNames.config,
+                RouteNames.credits,
+              }.contains(Get.currentRoute);
+
+              if (isHiddenRoute) {
+                return const SizedBox.shrink();
+              }
               return IconButton(
                 onPressed: () {
                   Scaffold.of(context).openEndDrawer();
