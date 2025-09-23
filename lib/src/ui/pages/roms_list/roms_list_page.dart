@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:kaat/l10n/app_localizations.dart';
+import 'package:kaat/src/ui/pages/download/download_controller.dart';
 import 'package:kaat/src/ui/pages/roms_list/roms_list_controller.dart';
 import 'package:kaat/src/ui/pages/roms_list/widgets/rom_modal_bottom_sheet.dart';
 import 'package:kaat/src/ui/widgets/app_drawer/app_drawer.dart';
@@ -12,10 +13,12 @@ class RomsListPage extends GetView<RomsListController> {
 
   @override
   Widget build(BuildContext context) {
+    final DownloadController downloadController =
+        Get.find<DownloadController>();
     return Scaffold(
       appBar: principalAppBar(
         context,
-        title: controller.platform['platform_name'],
+        title: controller.platform['platform_abbr'],
         logo: controller.platform['platform_logo'],
         clear: true,
       ),
@@ -68,6 +71,17 @@ class RomsListPage extends GetView<RomsListController> {
                           title: Text(name),
                           subtitle: Text(
                             '${rom.isNotEmpty ? "$rom " : ""} $size',
+                          ),
+                          trailing: IconButton(
+                            icon: const Icon(Icons.download_rounded),
+                            tooltip: AppLocalizations.of(context)!
+                                .downloadsActionDownload,
+                            onPressed: () async {
+                              await downloadController.enqueue(
+                                url: url,
+                                subdir: platformAbbr,
+                              );
+                            },
                           ),
                           onTap: () {
                             showModalBottomSheet<void>(

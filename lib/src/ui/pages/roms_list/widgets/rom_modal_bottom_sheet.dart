@@ -204,7 +204,6 @@ class RomModalBottomSheet extends StatelessWidget {
             label: Text(AppLocalizations.of(context)!.downloadsActionDownload),
             onPressed: () async {
               await downloadController.enqueue(url: url, subdir: platformAbbr);
-              Clipboard.setData(ClipboardData(text: url));
               if (!context.mounted) return;
               Get.showSnackbar(
                 AppSnackbar(

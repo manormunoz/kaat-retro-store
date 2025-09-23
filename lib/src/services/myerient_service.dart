@@ -45,6 +45,7 @@ class MyrientService {
 
         // Skip parent dir links
         if (name == '../' ||
+            name == './' ||
             name == 'Parent directory/' ||
             name == null ||
             name.isEmpty) {
