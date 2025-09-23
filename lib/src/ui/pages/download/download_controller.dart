@@ -69,15 +69,25 @@ class DownloadController extends GetxController {
     final dir = await getApplicationSupportDirectory();
     _baseDir = dir.path;
 
-    // Recomendado en 9.2.3 para activar DB interna y reanudación
-    await FileDownloader().start();
-    await FileDownloader().configure(
-      globalConfig: (
-        Config.holdingQueue,
-        (10, 2, null),
-      ), // activa holding queue   (maxConcurrent, maxByHost, maxByGroup)
-      androidConfig: (logging: false),
-    );
+    // await FileDownloader().configure(
+    //   globalConfig: [
+    //     // activa holding queue
+    //     (Config.holdingQueue, (10, 2, null)),
+
+    //     // desactiva logs globales
+    //     ('logging', Config.never),
+    //   ],
+    // );
+    await FileDownloader().configure(globalConfig: [
+      (Config.holdingQueue, (10, 2, null)),
+      (Config.requestTimeout, const Duration(seconds: 100)),
+      ('logging', false),
+    ], androidConfig: [
+      (Config.useCacheDir, Config.whenAble),
+      ('logging', false),
+    ], iOSConfig: [
+      (Config.localize, {'Cancel': 'StopIt'}),
+    ]);
     // Un solo stream para status + progreso
     FileDownloader().updates.listen((update) async {
       if (update is TaskProgressUpdate) {
@@ -114,6 +124,7 @@ class DownloadController extends GetxController {
         }
       }
     });
+    await FileDownloader().start();
   }
 
   // ==================== CONSULTAS POR ESTADO ====================
