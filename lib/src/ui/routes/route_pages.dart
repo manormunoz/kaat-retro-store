@@ -2,6 +2,8 @@ import 'package:kaat/src/ui/pages/config/config_binding.dart';
 import 'package:kaat/src/ui/pages/config/config_page.dart';
 import 'package:kaat/src/ui/pages/credits/credits_binding.dart';
 import 'package:kaat/src/ui/pages/credits/credits_page.dart';
+import 'package:kaat/src/ui/pages/download/download_binding.dart';
+import 'package:kaat/src/ui/pages/download/download_page.dart';
 import 'package:kaat/src/ui/pages/home/home_binding.dart';
 import 'package:kaat/src/ui/pages/home/home_page.dart';
 import 'package:kaat/src/ui/pages/no_connection/no_connection_binding.dart';
@@ -52,6 +54,12 @@ class RoutePages {
         name: RouteNames.config,
         page: () => const ConfigPage(),
         binding: const ConfigBinding(),
+        transition: Transition.cupertino,
+      ),
+      GetPage(
+        name: RouteNames.download,
+        page: () => const DownloadPage(),
+        binding: const DownloadBinding(),
         transition: Transition.cupertino,
       ),
     ];

@@ -30,7 +30,9 @@ class AppDrawer extends StatelessWidget {
                           children: [
                             Text(
                               AppLocalizations.of(context)!.configuration,
-                              style: Theme.of(context).textTheme.titleLarge!
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .titleLarge!
                                   .copyWith(
                                     color: Theme.of(
                                       context,
@@ -44,7 +46,7 @@ class AppDrawer extends StatelessWidget {
                                 child: IconButton(
                                   onPressed: () => Get.back(),
                                   icon: Icon(
-                                    Icons.close,
+                                    Icons.close_rounded,
                                     color: Theme.of(context).hintColor,
                                   ),
                                 ),
@@ -65,8 +67,8 @@ class AppDrawer extends StatelessWidget {
                     child: ListTile(
                       leading: Icon(
                         themeController.isDark
-                            ? Icons.light_mode_outlined
-                            : Icons.dark_mode_outlined,
+                            ? Icons.light_mode_rounded
+                            : Icons.dark_mode_rounded,
                       ),
                       title: Text(
                         themeController.isDark
@@ -86,7 +88,7 @@ class AppDrawer extends StatelessWidget {
                       vertical: 3,
                     ),
                     child: ListTile(
-                      leading: Icon(Icons.translate_outlined),
+                      leading: Icon(Icons.translate_rounded),
                       title: Text(
                         languageController.locale.value?.languageCode
                                 .toUpperCase() ??
@@ -102,7 +104,7 @@ class AppDrawer extends StatelessWidget {
                     vertical: 3,
                   ),
                   child: ListTile(
-                    leading: Icon(Icons.settings),
+                    leading: Icon(Icons.settings_rounded),
                     title: Text(AppLocalizations.of(context)!.configuration),
                     onTap: () {
                       Get.back();
@@ -124,6 +126,20 @@ class AppDrawer extends StatelessWidget {
                     },
                   ),
                 ),
+                // Padding(
+                //   padding: const EdgeInsets.symmetric(
+                //     horizontal: 5.0,
+                //     vertical: 3,
+                //   ),
+                //   child: ListTile(
+                //     leading: Icon(Icons.downloading_rounded),
+                //     title: Text('Downloads'),
+                //     onTap: () {
+                //       Get.back();
+                //       Get.toNamed(RouteNames.download);
+                //     },
+                //   ),
+                // ),
               ],
             ),
           ),

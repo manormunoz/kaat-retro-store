@@ -46,7 +46,7 @@ class AppSnackbar extends GetSnackBar {
     return IconButton(
       onPressed: () => Get.back(),
       color: Colors.white,
-      icon: const Icon(Icons.close_outlined),
+      icon: const Icon(Icons.close_rounded),
     );
   }
 

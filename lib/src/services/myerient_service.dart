@@ -62,6 +62,7 @@ class MyrientService {
           'logo': logo,
           'boxart': boxart,
           'ssSystemId': platform['ssSystemId'],
+          'platformAbbr': platform['platform_abbr'],
         });
       }
     } catch (e) {

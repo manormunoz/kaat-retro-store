@@ -18,15 +18,15 @@ class CreditsPage extends StatelessWidget {
     // final CreditsController controller = Get.find<CreditsController>();
     final cs = Theme.of(context).colorScheme;
     Widget sectionTitle(String text) => Padding(
-      padding: const EdgeInsets.fromLTRB(16, 24, 16, 8),
-      child: Text(
-        text,
-        style: Theme.of(context).textTheme.titleMedium?.copyWith(
-          color: cs.onSurface,
-          fontWeight: FontWeight.w600,
-        ),
-      ),
-    );
+          padding: const EdgeInsets.fromLTRB(16, 24, 16, 8),
+          child: Text(
+            text,
+            style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                  color: cs.onSurface,
+                  fontWeight: FontWeight.w600,
+                ),
+          ),
+        );
     return Scaffold(
       appBar: principalAppBar(
         context,
@@ -37,9 +37,8 @@ class CreditsPage extends StatelessWidget {
         padding: const EdgeInsets.symmetric(vertical: 8),
         children: [
           sectionTitle(AppLocalizations.of(context)!.creditsProjectsTitle),
-
           ListTile(
-            leading: const Icon(Icons.storage),
+            leading: const Icon(Icons.storage_rounded),
             title: const Text('Myrient'),
             subtitle: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -52,15 +51,14 @@ class CreditsPage extends StatelessWidget {
               ],
             ),
             trailing: IconButton(
-              icon: const Icon(Icons.open_in_new),
+              icon: const Icon(Icons.open_in_new_rounded),
               tooltip: 'Myrient',
               onPressed: () => _open('https://myrient.erista.me/'),
             ),
           ),
           const Divider(height: 1),
-
           ListTile(
-            leading: const Icon(Icons.cloud),
+            leading: const Icon(Icons.cloud_rounded),
             title: const Text('jsDelivr'),
             subtitle: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -73,15 +71,14 @@ class CreditsPage extends StatelessWidget {
               ],
             ),
             trailing: IconButton(
-              icon: const Icon(Icons.open_in_new),
+              icon: const Icon(Icons.open_in_new_rounded),
               tooltip: 'jsDelivr',
               onPressed: () => _open('https://www.jsdelivr.com/'),
             ),
           ),
           const Divider(height: 1),
-
           ListTile(
-            leading: const Icon(Icons.extension),
+            leading: const Icon(Icons.extension_rounded),
             title: const Text('Libretro / RetroArch'),
             subtitle: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -94,15 +91,14 @@ class CreditsPage extends StatelessWidget {
               ],
             ),
             trailing: IconButton(
-              icon: const Icon(Icons.open_in_new),
+              icon: const Icon(Icons.open_in_new_rounded),
               tooltip: 'Libretro / RetroArch',
               onPressed: () => _open('https://www.libretro.com/'),
             ),
           ),
           const Divider(height: 1),
-
           ListTile(
-            leading: const Icon(Icons.image),
+            leading: const Icon(Icons.image_rounded),
             title: const Text('libretro-thumbnails'),
             subtitle: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -115,16 +111,14 @@ class CreditsPage extends StatelessWidget {
               ],
             ),
             trailing: IconButton(
-              icon: const Icon(Icons.open_in_new),
+              icon: const Icon(Icons.open_in_new_rounded),
               tooltip: 'libretro-thumbnails',
               onPressed: () => _open('https://github.com/libretro-thumbnails'),
             ),
           ),
-
           const Divider(height: 1),
-
           ListTile(
-            leading: const Icon(Icons.image),
+            leading: const Icon(Icons.image_rounded),
             title: const Text('ScreenScraper'),
             subtitle: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -137,7 +131,7 @@ class CreditsPage extends StatelessWidget {
               ],
             ),
             trailing: IconButton(
-              icon: const Icon(Icons.open_in_new),
+              icon: const Icon(Icons.open_in_new_rounded),
               tooltip: 'ScreenScraper',
               onPressed: () => _open('https://www.screenscraper.fr/'),
             ),

@@ -6,12 +6,14 @@ import 'package:get_storage/get_storage.dart';
 import 'package:kaat/src/app/app.dart';
 import 'package:kaat/src/app/controllers/language_controller.dart';
 import 'package:kaat/src/app/controllers/theme_controller.dart';
+import 'package:kaat/src/ui/pages/download/download_controller.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await GetStorage.init();
   Get.put(ThemeController(), permanent: true);
   Get.put(LanguageController(), permanent: true);
+  Get.put(DownloadController(), permanent: true);
   await dotenv.load(fileName: ".env");
   runApp(const App());
 }

@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:kaat/l10n/app_localizations.dart';
 import 'package:kaat/src/services/game_class.dart';
+import 'package:kaat/src/ui/pages/download/download_controller.dart';
 import 'package:kaat/src/ui/pages/roms_list/roms_list_controller.dart';
 import 'package:kaat/src/ui/widgets/app_snackbar/app_snackbar.dart';
 import 'package:kaat/src/ui/widgets/fallback_network_image/fallback_network_image.dart';
@@ -14,6 +15,7 @@ class RomModalBottomSheet extends StatelessWidget {
   final String logo;
   final String url;
   final String ssSystemId;
+  final String platformAbbr;
   const RomModalBottomSheet({
     super.key,
     required this.name,
@@ -22,9 +24,10 @@ class RomModalBottomSheet extends StatelessWidget {
     required this.logo,
     required this.url,
     required this.ssSystemId,
+    required this.platformAbbr,
   });
 
-  Widget ssGameWidget(BuildContext context, Game? game) {
+  Widget ssGameWidget(BuildContext context, Game game) {
     final scheme = Theme.of(context).colorScheme;
     final romsListController = Get.find<RomsListController>();
 
@@ -59,8 +62,8 @@ class RomModalBottomSheet extends StatelessWidget {
                       ClipRRect(
                         borderRadius: BorderRadius.circular(12),
                         child: FallbackNetworkImage(
-                          urls: game?.box2D != null
-                              ? [game!.box2D!, boxart, logo]
+                          urls: game.box2D != null
+                              ? [game.box2D!, boxart, logo]
                               : [boxart, logo],
                           width: 100,
                           height: 100,
@@ -73,33 +76,36 @@ class RomModalBottomSheet extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              game?.title != null && game?.title != 'Unknown'
-                                  ? game!.title
+                              game.title != 'Unknown'
+                                  ? game.title
                                   : romsListController.clearGameName(name),
-                              style: Theme.of(context).textTheme.headlineSmall
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .headlineSmall
                                   ?.copyWith(
                                     fontWeight: FontWeight.bold,
                                     color: scheme.onSurface,
                                   ),
                             ),
-
                             const SizedBox(height: 2),
                             Text(
-                              '${game?.publisher ?? 'Unknown'}/${game?.developer ?? 'Unknown'}',
-                              style: Theme.of(context).textTheme.bodyMedium
+                              '${game.publisher ?? 'Unknown'}/${game.developer ?? 'Unknown'}',
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodyMedium
                                   ?.copyWith(
                                     fontWeight: FontWeight.bold,
                                     color: scheme.onSurface,
                                   ),
                             ),
                             const SizedBox(height: 8),
-                            game?.ratingOutOf5 != null
+                            game.ratingOutOf5 != null
                                 ? Row(
                                     children: List.generate(5, (i) {
                                       return Icon(
-                                        i < game!.ratingOutOf5!.round()
-                                            ? Icons.star
-                                            : Icons.star_border,
+                                        i < game.ratingOutOf5!.round()
+                                            ? Icons.star_rounded
+                                            : Icons.star_border_rounded,
                                         color: Colors.amber,
                                         size: 20,
                                       );
@@ -109,7 +115,7 @@ class RomModalBottomSheet extends StatelessWidget {
                                     children: List.generate(
                                       5,
                                       (i) => Icon(
-                                        Icons.star_border,
+                                        Icons.star_border_rounded,
                                         color: Colors.grey,
                                         size: 20,
                                       ),
@@ -125,20 +131,19 @@ class RomModalBottomSheet extends StatelessWidget {
                   const SizedBox(height: 8),
                   Text(
                     AppLocalizations.of(context)!.synopsis,
-
                     style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                      fontWeight: FontWeight.bold,
-                      color: scheme.onSurface,
-                    ),
+                          fontWeight: FontWeight.bold,
+                          color: scheme.onSurface,
+                        ),
                   ),
                   const SizedBox(height: 4),
                   SafeArea(
                     child: Text(
-                      game?.synopsis ??
+                      game.synopsis ??
                           AppLocalizations.of(context)!.romNoMetadata,
                       style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: scheme.onSurfaceVariant,
-                      ),
+                            color: scheme.onSurfaceVariant,
+                          ),
                     ),
                   ),
                 ],
@@ -157,18 +162,20 @@ class RomModalBottomSheet extends StatelessWidget {
       right: 5,
       child: IconButton(
         onPressed: () => Get.back(),
-        icon: Icon(Icons.close, color: scheme.onSurface),
+        icon: Icon(Icons.close_rounded, color: scheme.onSurface),
       ),
     );
   }
 
   Widget buttons(BuildContext context, String url) {
     final romsListController = Get.find<RomsListController>();
+    final DownloadController downloadController =
+        Get.find<DownloadController>();
     return Row(
       children: [
         Expanded(
           child: FilledButton.icon(
-            icon: const Icon(Icons.open_in_browser),
+            icon: const Icon(Icons.open_in_browser_rounded),
             label: Text(AppLocalizations.of(context)!.openLink),
             onPressed: () => romsListController.openMyrient(url),
           ),
@@ -176,14 +183,33 @@ class RomModalBottomSheet extends StatelessWidget {
         const SizedBox(width: 8),
         Expanded(
           child: OutlinedButton.icon(
-            icon: const Icon(Icons.copy),
+            icon: const Icon(Icons.copy_rounded),
             label: Text(AppLocalizations.of(context)!.copyLink),
-            onPressed: () {
+            onPressed: () async {
               Clipboard.setData(ClipboardData(text: url));
+              if (!context.mounted) return;
               Get.showSnackbar(
                 AppSnackbar(
                   SnackbarType.info,
                   AppLocalizations.of(context)!.linkCopied,
+                ),
+              );
+            },
+          ),
+        ),
+        const SizedBox(width: 8),
+        Expanded(
+          child: OutlinedButton.icon(
+            icon: const Icon(Icons.download_rounded),
+            label: Text(AppLocalizations.of(context)!.downloadsActionDownload),
+            onPressed: () async {
+              await downloadController.enqueue(url: url, subdir: platformAbbr);
+              Clipboard.setData(ClipboardData(text: url));
+              if (!context.mounted) return;
+              Get.showSnackbar(
+                AppSnackbar(
+                  SnackbarType.info,
+                  AppLocalizations.of(context)!.downloadsRomAdded,
                 ),
               );
             },
@@ -224,7 +250,7 @@ class RomModalBottomSheet extends StatelessWidget {
         // }
 
         final game = snapshot.data;
-        return ssGameWidget(context, game);
+        return ssGameWidget(context, game!);
       },
     );
   }

@@ -35,5 +35,18 @@
     "ssClearedMessage": "Credenciales eliminadas",
     "ssSavedMessage": "Credenciales actualizadas",
     "ssClearButton": "Limpiar",
-    "ssSaveButton": "Guardar"
+    "ssSaveButton": "Guardar",
+    "downloadsTitle": "Descargas",
+    "downloadsNoActiveDownloads": "No hay descargas activas",
+    "downloadsDownloadsCleared": "Descargas borradas",
+    "downloadsStatusEnqueued": "En cola",
+    "downloadsStatusRunning": "Descargando",
+    "downloadsStatusComplete": "Completado",
+    "downloadsStatusPaused": "Pausado",
+    "downloadsStatusCanceled": "Cancelado",
+    "downloadsStatusFailed": "Error",
+    "downloadsStatusWaitingToRetry": "Pendiente de reintento",
+    "downloadsStatusNotFound": "No encontrado",
+    "downloadsRomAdded": "ROM agregado a la lista de descargas",
+    "downloadsActionDownload": "Descargar"
 }

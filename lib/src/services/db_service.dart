@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter/widgets.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 import 'package:yaml/yaml.dart';
@@ -96,15 +96,18 @@ class DbService {
     final yamlList = Map<String, dynamic>.from(yamlJson);
     for (final item in yamlList.entries) {
       final platform = item.value as Map<String, dynamic>;
-      await db.insert('platforms', {
-        'name': platform['platform_name'],
-        'abbr': platform['platform_abbr'],
-        'logo': platform['platform_logo'],
-        'url': platform['url'],
-        'boxarts': platform['roms_boxarts'],
-        'romsLogos': platform['roms_logos'],
-        'ssSystemId': platform['ssSystemId'],
-      }, conflictAlgorithm: ConflictAlgorithm.replace);
+      await db.insert(
+          'platforms',
+          {
+            'name': platform['platform_name'],
+            'abbr': platform['platform_abbr'],
+            'logo': platform['platform_logo'],
+            'url': platform['url'],
+            'boxarts': platform['roms_boxarts'],
+            'romsLogos': platform['roms_logos'],
+            'ssSystemId': platform['ssSystemId'],
+          },
+          conflictAlgorithm: ConflictAlgorithm.replace);
     }
 
     debugPrint("✅ Platforms initialized");

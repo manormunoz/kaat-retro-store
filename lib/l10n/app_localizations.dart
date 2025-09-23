@@ -63,7 +63,7 @@ import 'app_localizations_es.dart';
 /// property.
 abstract class AppLocalizations {
   AppLocalizations(String locale)
-    : localeName = intl.Intl.canonicalizedLocale(locale.toString());
+      : localeName = intl.Intl.canonicalizedLocale(locale.toString());
 
   final String localeName;
 
@@ -86,16 +86,16 @@ abstract class AppLocalizations {
   /// of delegates is preferred or required.
   static const List<LocalizationsDelegate<dynamic>> localizationsDelegates =
       <LocalizationsDelegate<dynamic>>[
-        delegate,
-        GlobalMaterialLocalizations.delegate,
-        GlobalCupertinoLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
-      ];
+    delegate,
+    GlobalMaterialLocalizations.delegate,
+    GlobalCupertinoLocalizations.delegate,
+    GlobalWidgetsLocalizations.delegate,
+  ];
 
   /// A list of this localizations delegate's supported locales.
   static const List<Locale> supportedLocales = <Locale>[
     Locale('en'),
-    Locale('es'),
+    Locale('es')
   ];
 
   /// No description provided for @initDb.
@@ -313,6 +313,84 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Save'**
   String get ssSaveButton;
+
+  /// No description provided for @downloadsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Downloads'**
+  String get downloadsTitle;
+
+  /// No description provided for @downloadsNoActiveDownloads.
+  ///
+  /// In en, this message translates to:
+  /// **'No active downloads'**
+  String get downloadsNoActiveDownloads;
+
+  /// No description provided for @downloadsDownloadsCleared.
+  ///
+  /// In en, this message translates to:
+  /// **'Download cleared'**
+  String get downloadsDownloadsCleared;
+
+  /// No description provided for @downloadsStatusEnqueued.
+  ///
+  /// In en, this message translates to:
+  /// **'Enqueued'**
+  String get downloadsStatusEnqueued;
+
+  /// No description provided for @downloadsStatusRunning.
+  ///
+  /// In en, this message translates to:
+  /// **'Downloading'**
+  String get downloadsStatusRunning;
+
+  /// No description provided for @downloadsStatusComplete.
+  ///
+  /// In en, this message translates to:
+  /// **'Completed'**
+  String get downloadsStatusComplete;
+
+  /// No description provided for @downloadsStatusPaused.
+  ///
+  /// In en, this message translates to:
+  /// **'Paused'**
+  String get downloadsStatusPaused;
+
+  /// No description provided for @downloadsStatusCanceled.
+  ///
+  /// In en, this message translates to:
+  /// **'Canceled'**
+  String get downloadsStatusCanceled;
+
+  /// No description provided for @downloadsStatusFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed'**
+  String get downloadsStatusFailed;
+
+  /// No description provided for @downloadsStatusWaitingToRetry.
+  ///
+  /// In en, this message translates to:
+  /// **'Waiting to retry'**
+  String get downloadsStatusWaitingToRetry;
+
+  /// No description provided for @downloadsStatusNotFound.
+  ///
+  /// In en, this message translates to:
+  /// **'Not found'**
+  String get downloadsStatusNotFound;
+
+  /// No description provided for @downloadsRomAdded.
+  ///
+  /// In en, this message translates to:
+  /// **'ROM added to the download list'**
+  String get downloadsRomAdded;
+
+  /// No description provided for @downloadsActionDownload.
+  ///
+  /// In en, this message translates to:
+  /// **'Download'**
+  String get downloadsActionDownload;
 }
 
 class _AppLocalizationsDelegate
@@ -342,9 +420,8 @@ AppLocalizations lookupAppLocalizations(Locale locale) {
   }
 
   throw FlutterError(
-    'AppLocalizations.delegate failed to load unsupported locale "$locale". This is likely '
-    'an issue with the localizations generation tool. Please file an issue '
-    'on GitHub with a reproducible sample app and the gen-l10n configuration '
-    'that was used.',
-  );
+      'AppLocalizations.delegate failed to load unsupported locale "$locale". This is likely '
+      'an issue with the localizations generation tool. Please file an issue '
+      'on GitHub with a reproducible sample app and the gen-l10n configuration '
+      'that was used.');
 }

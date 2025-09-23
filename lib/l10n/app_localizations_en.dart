@@ -117,4 +117,43 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get ssSaveButton => 'Save';
+
+  @override
+  String get downloadsTitle => 'Downloads';
+
+  @override
+  String get downloadsNoActiveDownloads => 'No active downloads';
+
+  @override
+  String get downloadsDownloadsCleared => 'Download cleared';
+
+  @override
+  String get downloadsStatusEnqueued => 'Enqueued';
+
+  @override
+  String get downloadsStatusRunning => 'Downloading';
+
+  @override
+  String get downloadsStatusComplete => 'Completed';
+
+  @override
+  String get downloadsStatusPaused => 'Paused';
+
+  @override
+  String get downloadsStatusCanceled => 'Canceled';
+
+  @override
+  String get downloadsStatusFailed => 'Failed';
+
+  @override
+  String get downloadsStatusWaitingToRetry => 'Waiting to retry';
+
+  @override
+  String get downloadsStatusNotFound => 'Not found';
+
+  @override
+  String get downloadsRomAdded => 'ROM added to the download list';
+
+  @override
+  String get downloadsActionDownload => 'Download';
 }

@@ -33,7 +33,7 @@ class RomsListPage extends GetView<RomsListController> {
                 textInputAction: TextInputAction.search,
                 decoration: InputDecoration(
                   hintText: AppLocalizations.of(context)!.searchoRoms,
-                  prefixIcon: const Icon(Icons.search),
+                  prefixIcon: const Icon(Icons.search_rounded),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
@@ -55,6 +55,8 @@ class RomsListPage extends GetView<RomsListController> {
                         final logo = item['logo']?.toString() ?? '';
                         final url = item['url']?.toString() ?? '';
                         final ssSystemId = item['ssSystemId']?.toString() ?? '';
+                        final platformAbbr =
+                            item['platformAbbr']?.toString() ?? '';
 
                         return ListTile(
                           leading: FallbackNetworkImage(
@@ -82,6 +84,7 @@ class RomsListPage extends GetView<RomsListController> {
                                   logo: logo,
                                   url: url,
                                   ssSystemId: ssSystemId,
+                                  platformAbbr: platformAbbr,
                                 );
                               },
                             );

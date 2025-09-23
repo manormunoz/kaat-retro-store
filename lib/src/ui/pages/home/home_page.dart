@@ -35,8 +35,10 @@ class HomePage extends GetView<HomeController> {
                   height: 40,
                   child: CircularProgressIndicator(strokeWidth: 2),
                 ),
-                errorWidget: (context, url, error) =>
-                    Icon(Icons.broken_image, size: 40, color: Colors.grey),
+                errorWidget: (context, url, error) => Icon(
+                    Icons.broken_image_rounded,
+                    size: 40,
+                    color: Colors.grey),
               ),
               title: Text(value['platform_name']),
               subtitle: Text(value['platform_abbr']),

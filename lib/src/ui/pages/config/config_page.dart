@@ -26,15 +26,15 @@ class ConfigPage extends StatelessWidget {
                 Text(
                   AppLocalizations.of(context)!.ssConfigTitle,
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.w400,
-                  ),
+                        fontWeight: FontWeight.w400,
+                      ),
                 ),
                 const SizedBox(height: 16),
                 TextFormField(
                   controller: controller.userCtrl,
                   decoration: InputDecoration(
                     labelText: AppLocalizations.of(context)!.ssUsernameLabel,
-                    prefixIcon: Icon(Icons.person_outline),
+                    prefixIcon: Icon(Icons.person_rounded),
                   ),
                   validator: (v) => (v == null || v.trim().isEmpty)
                       ? AppLocalizations.of(context)!.errorRequired
@@ -45,7 +45,7 @@ class ConfigPage extends StatelessWidget {
                   controller: controller.passCtrl,
                   decoration: InputDecoration(
                     labelText: AppLocalizations.of(context)!.ssPasswordLabel,
-                    prefixIcon: Icon(Icons.lock_outline),
+                    prefixIcon: Icon(Icons.lock_rounded),
                   ),
                   obscureText: true,
                   validator: (v) => (v == null || v.isEmpty)

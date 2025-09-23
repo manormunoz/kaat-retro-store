@@ -75,9 +75,8 @@ class _FallbackNetworkImageState extends State<FallbackNetworkImage> {
           return SizedBox(
             width: widget.width,
             height: widget.height,
-            child:
-                widget.fallback ??
-                const Center(child: Icon(Icons.broken_image, size: 40)),
+            child: widget.fallback ??
+                const Center(child: Icon(Icons.broken_image_rounded, size: 40)),
           );
         }
         _nextUrl(); // programa el cambio para el siguiente frame
