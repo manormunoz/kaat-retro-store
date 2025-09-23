@@ -81,13 +81,15 @@ class DownloadController extends GetxController {
     await FileDownloader().configure(globalConfig: [
       (Config.holdingQueue, (10, 2, null)),
       (Config.requestTimeout, const Duration(seconds: 100)),
-      ('logging', false),
+      // (Config.logging, false),
     ], androidConfig: [
       (Config.useCacheDir, Config.whenAble),
       ('logging', false),
     ], iOSConfig: [
       (Config.localize, {'Cancel': 'StopIt'}),
     ]);
+    // debugPrint('Configuration result = $result');
+
     // Un solo stream para status + progreso
     FileDownloader().updates.listen((update) async {
       if (update is TaskProgressUpdate) {
