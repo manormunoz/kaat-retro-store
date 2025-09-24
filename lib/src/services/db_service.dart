@@ -22,9 +22,9 @@ class DbService {
   Future<Database> _initDb() async {
     final dbPath = await getDatabasesPath();
     final path = join(dbPath, 'kaat_db.db');
-    final db = await openDatabase(path, version: 1, onCreate: _onCreate);
+    final db = await openDatabase(path, version: 1);
     // await dropTables(db);
-    // await _onCreate(db, 1);
+    await _onCreate(db, 1);
     // debugListTables(db);
     return db;
   }
