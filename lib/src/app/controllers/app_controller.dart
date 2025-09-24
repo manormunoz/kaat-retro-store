@@ -95,9 +95,6 @@ class AppController extends GetxController {
   FutureOr<void> _updateConnectionStatus(
     List<ConnectivityResult> result,
   ) async {
-    debugPrint('----------------_updateConnectionStatus----------------');
-
-    debugPrint(result.first.name);
     _connectionStatus.value = result.first;
     await _checkStatus();
   }
@@ -114,10 +111,16 @@ class AppController extends GetxController {
     } on SocketException catch (_) {
       isOnline.value = false;
     }
-    if (_connectionStatus.value == ConnectivityResult.none || !isOnline.value) {
-      Get.offNamed(RouteNames.noConnection);
-    } else {
-      Get.offNamed(RouteNames.home);
+    debugPrint(Get.currentRoute);
+    debugPrint((Get.currentRoute != RouteNames.splash).toString());
+    if (Get.currentRoute != RouteNames.splash) {
+      if (_connectionStatus.value == ConnectivityResult.none ||
+          !isOnline.value) {
+        Get.offAllNamed(RouteNames.noConnection);
+      } else {
+        debugPrint('SALE DESDE _checkStatus');
+        Get.offAllNamed(RouteNames.home);
+      }
     }
   }
 }

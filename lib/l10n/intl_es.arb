@@ -1,5 +1,5 @@
 {
-    "initDb": "Inicializando la base de datos, no cerrar Kaat",
+    "initDb": "Inicializando la base de datos, no cerrar",
     "version": "Versión",
     "configuration": "Configuración",
     "darkTheme": "Tema obscuro",

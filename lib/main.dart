@@ -15,5 +15,6 @@ void main() async {
   Get.put(LanguageController(), permanent: true);
   Get.put(DownloadController(), permanent: true);
   await dotenv.load(fileName: ".env");
+
   runApp(const App());
 }

@@ -101,7 +101,7 @@ abstract class AppLocalizations {
   /// No description provided for @initDb.
   ///
   /// In en, this message translates to:
-  /// **'Initializing the database, do not close Kaat'**
+  /// **'Initializing the database, do not close'**
   String get initDb;
 
   /// No description provided for @version.

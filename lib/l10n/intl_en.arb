@@ -1,5 +1,5 @@
 {
-    "initDb": "Initializing the database, do not close Kaat",
+    "initDb": "Initializing the database, do not close",
     "version": "Version",
     "configuration": "Configuration",
     "darkTheme": "Dark theme",

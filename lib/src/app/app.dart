@@ -34,6 +34,15 @@ class App extends StatelessWidget {
         theme: theme.light(),
         darkTheme: theme.dark(),
         themeMode: themeCtrl.themeMode.value,
+        routingCallback: (routing) {
+          if (routing != null) {
+            debugPrint(
+                '[ROUTING] from=${routing.previous} to=${routing.current}');
+          } else {
+            debugPrint('[ROUTING] no routing');
+          }
+        },
+        navigatorObservers: [RouteObserver<PageRoute>()],
       ),
     );
   }

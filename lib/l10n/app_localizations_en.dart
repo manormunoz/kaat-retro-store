@@ -9,7 +9,7 @@ class AppLocalizationsEn extends AppLocalizations {
   AppLocalizationsEn([String locale = 'en']) : super(locale);
 
   @override
-  String get initDb => 'Initializing the database, do not close Kaat';
+  String get initDb => 'Initializing the database, do not close';
 
   @override
   String get version => 'Version';

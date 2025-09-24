@@ -3,7 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:kaat/l10n/app_localizations.dart';
 import 'package:kaat/src/services/game_class.dart';
-import 'package:kaat/src/ui/pages/download/download_controller.dart';
+// import 'package:kaat/src/ui/pages/download/download_controller.dart';
 import 'package:kaat/src/ui/pages/roms_list/roms_list_controller.dart';
 import 'package:kaat/src/ui/widgets/app_snackbar/app_snackbar.dart';
 import 'package:kaat/src/ui/widgets/fallback_network_image/fallback_network_image.dart';
@@ -169,8 +169,8 @@ class RomModalBottomSheet extends StatelessWidget {
 
   Widget buttons(BuildContext context, String url) {
     final romsListController = Get.find<RomsListController>();
-    final DownloadController downloadController =
-        Get.find<DownloadController>();
+    // final DownloadController downloadController =
+    //     Get.find<DownloadController>();
     return Row(
       children: [
         Expanded(

@@ -10,22 +10,25 @@ class DbService {
   static final DbService _instance = DbService._internal();
   factory DbService() => _instance;
   static Database? _db;
+  bool _isReady = false;
+  bool get isReady => _isReady;
 
   DbService._internal();
 
   Future<Database> get database async {
     if (_db != null) return _db!;
-    _db = await _initDb();
+    _db = await initDb();
     return _db!;
   }
 
-  Future<Database> _initDb() async {
+  Future<Database> initDb() async {
     final dbPath = await getDatabasesPath();
     final path = join(dbPath, 'kaat_db.db');
-    final db = await openDatabase(path, version: 1);
+    final db = await openDatabase(path, version: 1, onCreate: _onCreate);
     // await dropTables(db);
-    await _onCreate(db, 1);
+    // await _onCreate(db, 1);
     // debugListTables(db);
+    _isReady = true;
     return db;
   }
 
@@ -81,11 +84,6 @@ class DbService {
     );
     final count = Sqflite.firstIntValue(countResult) ?? 0;
 
-    if (count > 0) {
-      debugPrint("ℹ️ Platforms has data, not initilezed");
-      return;
-    }
-
     final yamlString = await rootBundle.loadString(
       'assets/config/platforms.yaml',
     );
@@ -93,6 +91,12 @@ class DbService {
     final yamlMap = loadYaml(yamlString);
     final yamlJson = json.decode(json.encode(yamlMap));
     final yamlList = Map<String, dynamic>.from(yamlJson);
+    if (count == yamlList.length) {
+      debugPrint("ℹ️ Platforms has data, not initilezed");
+      return;
+    } else {
+      await db.execute('DELETE FROM platforms');
+    }
     for (final item in yamlList.entries) {
       final platform = item.value as Map<String, dynamic>;
       await db.insert(
@@ -131,7 +135,7 @@ class DbService {
 
     final jsonString = await rootBundle.loadString('assets/data/mame.json');
     final List<dynamic> romsList = json.decode(jsonString);
-
+    debugPrint('MAME LIST LENGTH ${romsList.length.toString()}');
     for (final rom in romsList) {
       final romName = rom['rom']?.toString().trim();
       final title = rom['name']?.toString().trim();
@@ -165,8 +169,9 @@ class DbService {
         // 'rating': rom['rating'],
         'platformId': platformId,
       });
-      debugPrint("✅ MAME roms initialized");
+      debugPrint("✅ MAME rom initialized");
     }
+    debugPrint("✅ MAME All roms initialized");
   }
 
   Future<Map<String, dynamic>?> getPlatformByAbbr({
