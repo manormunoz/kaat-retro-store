@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:sqflite/sqflite.dart';
@@ -30,6 +31,12 @@ class DbService {
     // debugListTables(db);
     _isReady = true;
     return db;
+  }
+
+  List<Map<String, dynamic>> _decodeRoms(String jsonString) {
+    final list = json.decode(jsonString) as List;
+    return List<Map<String, dynamic>>.from(
+        list.map((e) => Map<String, dynamic>.from(e as Map)));
   }
 
   Future<void> debugListTables(Database db) async {
@@ -134,44 +141,89 @@ class DbService {
     }
 
     final jsonString = await rootBundle.loadString('assets/data/mame.json');
-    final List<dynamic> romsList = json.decode(jsonString);
+    // final List<dynamic> romsList = json.decode(jsonString);
+    final romsList = await compute(_decodeRoms, jsonString);
     debugPrint('MAME LIST LENGTH ${romsList.length.toString()}');
-    for (final rom in romsList) {
-      final romName = rom['rom']?.toString().trim();
-      final title = rom['name']?.toString().trim();
+    const chunk = 500;
+    int i = 0;
+    while (i < romsList.length) {
+      final end = (i + chunk).clamp(0, romsList.length);
+      final slice = romsList.sublist(i, end);
+      debugPrint("✅ MAME roms initialized i: $i end: $end}");
 
-      if (romName == null ||
-          romName.isEmpty ||
-          title == null ||
-          title.isEmpty) {
-        continue;
-      }
-
-      final exists = Sqflite.firstIntValue(
-        await db.rawQuery(
-          'SELECT COUNT(*) FROM roms WHERE rom = ? AND platformId = ?',
-          [romName, platformId],
-        ),
-      );
-
-      if (exists != null && exists > 0) {
-        continue;
-      }
-
-      await db.insert('roms', {
-        'rom': romName,
-        'title': title,
-        // 'synopsis': rom['synopsis'],
-        // 'date': rom['date'],
-        'year': rom['year'],
-        'publisher': rom['manufacturer'],
-        // 'developer': rom['developer'],
-        // 'rating': rom['rating'],
-        'platformId': platformId,
+      await db.transaction((txn) async {
+        final batch = txn.batch();
+        for (final rom in slice) {
+          final romName = rom['rom']?.toString().trim();
+          final title = rom['name']?.toString().trim();
+          if (romName == null ||
+              romName.isEmpty ||
+              title == null ||
+              title.isEmpty) {
+            continue;
+          }
+          batch.insert(
+              'roms',
+              {
+                'rom': romName,
+                'title': title,
+                'year': rom['year'],
+                'publisher': rom['manufacturer'],
+                'platformId': platformId,
+              },
+              conflictAlgorithm: ConflictAlgorithm.ignore);
+        }
+        await batch.commit(noResult: true);
       });
-      debugPrint("✅ MAME rom initialized");
+      i = end;
+      // cede el control al event loop para que iOS no sienta “freeze”
+      await Future.delayed(const Duration(milliseconds: 1));
     }
+
     debugPrint("✅ MAME All roms initialized");
+    final countAfterResult = await db.rawQuery(
+      'SELECT COUNT(*) as count FROM roms WHERE platformId=?',
+      [platformId],
+    );
+    final countAfter = Sqflite.firstIntValue(countAfterResult) ?? 0;
+    debugPrint("${countAfter.toString()} MAME data roms inserted");
+    // for (final rom in romsList) {
+    //   final romName = rom['rom']?.toString().trim();
+    //   final title = rom['name']?.toString().trim();
+
+    //   if (romName == null ||
+    //       romName.isEmpty ||
+    //       title == null ||
+    //       title.isEmpty) {
+    //     continue;
+    //   }
+
+    //   // final exists = Sqflite.firstIntValue(
+    //   //   await db.rawQuery(
+    //   //     'SELECT COUNT(*) FROM roms WHERE rom = ? AND platformId = ?',
+    //   //     [romName, platformId],
+    //   //   ),
+    //   // );
+
+    //   // if (exists != null && exists > 0) {
+    //   //   continue;
+    //   // }
+
+    //   await db.insert('roms', {
+    //     'rom': romName,
+    //     'title': title,
+    //     // 'synopsis': rom['synopsis'],
+    //     // 'date': rom['date'],
+    //     'year': rom['year'],
+    //     'publisher': rom['manufacturer'],
+    //     // 'developer': rom['developer'],
+    //     // 'rating': rom['rating'],
+    //     'platformId': platformId,
+    //   });
+    //   debugPrint("✅ MAME rom initialized");
+    // }
+    // debugPrint("✅ MAME All roms initialized");
+    // return;
   }
 
   Future<Map<String, dynamic>?> getPlatformByAbbr({
