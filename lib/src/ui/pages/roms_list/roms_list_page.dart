@@ -11,6 +11,35 @@ import 'package:kaat/src/ui/widgets/principal_app_bar/principal_app_bar.dart';
 class RomsListPage extends GetView<RomsListController> {
   const RomsListPage({super.key});
 
+  Future<bool> showConfirmDialog(BuildContext context,
+      {required String title, required String message}) async {
+    final result = await showDialog<bool>(
+      context: context,
+      barrierDismissible: false, // no se puede cerrar tocando afuera
+      builder: (ctx) {
+        return AlertDialog(
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          title: Text(title),
+          content: Text(message),
+          actions: [
+            TextButton(
+              style: TextButton.styleFrom(foregroundColor: Colors.grey),
+              onPressed: () => Navigator.of(ctx).pop(false),
+              child: Text(AppLocalizations.of(context)!.cancel),
+            ),
+            FilledButton(
+              onPressed: () => Navigator.of(ctx).pop(true),
+              child: Text(AppLocalizations.of(context)!.confirm),
+            ),
+          ],
+        );
+      },
+    );
+
+    return result ?? false;
+  }
+
   @override
   Widget build(BuildContext context) {
     final DownloadController downloadController =
@@ -77,10 +106,23 @@ class RomsListPage extends GetView<RomsListController> {
                             tooltip: AppLocalizations.of(context)!
                                 .downloadsActionDownload,
                             onPressed: () async {
-                              await downloadController.enqueue(
-                                url: url,
-                                subdir: platformAbbr,
-                              );
+                              final uri = downloadController
+                                  .getSavedFolderUri(platformAbbr);
+                              final r = uri == null
+                                  ? await showConfirmDialog(
+                                      context,
+                                      title: AppLocalizations.of(context)!
+                                          .downloadsFolderSelectionOnceTitle,
+                                      message: AppLocalizations.of(context)!
+                                          .downloadsFolderSelectionOnceMsg,
+                                    )
+                                  : true;
+                              if (r) {
+                                await downloadController.enqueue(
+                                  url: url,
+                                  subdir: platformAbbr,
+                                );
+                              }
                             },
                           ),
                           onTap: () {

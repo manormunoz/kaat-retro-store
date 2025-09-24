@@ -9,7 +9,7 @@ class AppLocalizationsEs extends AppLocalizations {
   AppLocalizationsEs([String locale = 'es']) : super(locale);
 
   @override
-  String get initDb => 'Inicializando la base de datos';
+  String get initDb => 'Inicializando la base de datos, no cerrar Kaat';
 
   @override
   String get version => 'Versión';
@@ -25,6 +25,12 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get labelGoBack => 'Regresar';
+
+  @override
+  String get cancel => 'Cancelar';
+
+  @override
+  String get confirm => 'Aceptar';
 
   @override
   String get systemLanguage => 'Sistema';
@@ -158,4 +164,20 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get downloadsActionDownload => 'Descargar';
+
+  @override
+  String get downloadsSelectFolderRequired =>
+      'Es necesario seleccionar una carpeta';
+
+  @override
+  String downloadsFoldersReferencesRemoved(Object total) {
+    return '$total Referencia(s) a carpetas eliminadas';
+  }
+
+  @override
+  String get downloadsFolderSelectionOnceTitle => 'Seleccionar carpeta';
+
+  @override
+  String get downloadsFolderSelectionOnceMsg =>
+      'La selección de carpeta es sólo una vez por plataforma';
 }

@@ -9,7 +9,7 @@ class AppLocalizationsEn extends AppLocalizations {
   AppLocalizationsEn([String locale = 'en']) : super(locale);
 
   @override
-  String get initDb => 'Initializing the database';
+  String get initDb => 'Initializing the database, do not close Kaat';
 
   @override
   String get version => 'Version';
@@ -25,6 +25,12 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get labelGoBack => 'Go back';
+
+  @override
+  String get cancel => 'Cancel';
+
+  @override
+  String get confirm => 'Confirm';
 
   @override
   String get systemLanguage => 'Sistema';
@@ -156,4 +162,19 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get downloadsActionDownload => 'Download';
+
+  @override
+  String get downloadsSelectFolderRequired => 'A folder must be selected';
+
+  @override
+  String downloadsFoldersReferencesRemoved(Object total) {
+    return '$total folder reference(s) removed';
+  }
+
+  @override
+  String get downloadsFolderSelectionOnceTitle => 'Select folder';
+
+  @override
+  String get downloadsFolderSelectionOnceMsg =>
+      'Folder selection is only once per platform';
 }

@@ -1,9 +1,11 @@
+import 'dart:async';
 import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:background_downloader/background_downloader.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:kaat/l10n/app_localizations.dart';
+import 'package:kaat/src/ui/widgets/app_snackbar/app_snackbar.dart';
 import 'package:path_provider/path_provider.dart';
 
 class DownloadItem {
@@ -15,7 +17,7 @@ class DownloadItem {
     this.localPath,
   });
 
-  final dynamic task; // guardamos el DownloadTask
+  final UriDownloadTask task; // guardamos el DownloadTask
   double progress; // 0..1
   TaskStatus status;
   String? localPath;
@@ -339,37 +341,44 @@ class DownloadController extends GetxController {
   }
 
   /// Encola una descarga y la registra en el mapa
-  Future<String> enqueue({
+  Future<String?> enqueue({
     required String url,
     required String subdir, // p.ej. 'roms'
     String? filename,
     bool requiresWifi = false,
   }) async {
     final destUri = await pickFolder(subdir);
+    if (destUri == null) {
+      Get.showSnackbar(AppSnackbar(
+        SnackbarType.danger,
+        AppLocalizations.of(Get.context!)!.downloadsSelectFolderRequired,
+      ));
+
+      return null;
+    }
     final uri = Uri.parse(url);
     final filenameSfe = filename ??
         (uri.pathSegments.isNotEmpty ? uri.pathSegments.last : 'unknown.file');
 
-    final task = destUri != null
-        ? UriDownloadTask(
-            url: url,
-            directoryUri: destUri,
-            filename: filenameSfe,
-            updates: Updates.statusAndProgress,
-            requiresWiFi: requiresWifi,
-            allowPause: true,
-            retries: 2,
-          )
-        : DownloadTask(
-            url: url,
-            filename: filenameSfe,
-            baseDirectory: BaseDirectory.applicationSupport,
-            directory: subdir,
-            updates: Updates.statusAndProgress,
-            requiresWiFi: requiresWifi,
-            allowPause: true,
-            retries: 2,
-          );
+    final task = UriDownloadTask(
+      url: url,
+      directoryUri: destUri,
+      filename: filenameSfe,
+      updates: Updates.statusAndProgress,
+      requiresWiFi: requiresWifi,
+      allowPause: true,
+      retries: 2,
+    );
+    //  DownloadTask(
+    //     url: url,
+    //     filename: filenameSfe,
+    //     baseDirectory: BaseDirectory.applicationSupport,
+    //     directory: subdir,
+    //     updates: Updates.statusAndProgress,
+    //     requiresWiFi: requiresWifi,
+    //     allowPause: true,
+    //     retries: 2,
+    //   );
 
     final localPath = '$_baseDir/$subdir/$filenameSfe';
     debugPrint(localPath);
@@ -442,6 +451,7 @@ class DownloadController extends GetxController {
     if (cached != null) {
       return cached;
     }
+
     // Abre el picker de directorio (Android → SAF, iOS → UIDocumentPicker)
     final Uri? folderUri = await FileDownloader().uri.pickDirectory(
           persistedUriPermission: true,
@@ -464,5 +474,34 @@ class DownloadController extends GetxController {
   Uri? getSavedFolderUri(String subdir) {
     final uriStr = _box.read<String>('downloads_folder_${subdir}_uri');
     return uriStr != null ? Uri.parse(uriStr) : null;
+  }
+
+  Future<int> removeAllDownloadFolderUris() async {
+    final allKeys = _box.getKeys().whereType<String>().toList(growable: false);
+
+    // 2) Filtra las que te interesan
+    final toDelete = allKeys
+        .where((k) => k.startsWith('downloads_folder_') && k.endsWith('_uri'))
+        .toList(growable: false);
+
+    // 3) Borra sobre la lista materializada (¡no sobre el iterable original!)
+    for (final k in toDelete) {
+      await _box.remove(k);
+    }
+
+    return toDelete.length;
+  }
+
+  Future<void> removeDownloadFolderUri(String subdir) async {
+    final key = 'downloads_folder_${subdir}_uri';
+    await _box.remove(key);
+  }
+
+  List<String> listDownloadFolderUris() {
+    return _box
+        .getKeys()
+        .whereType<String>()
+        .where((k) => k.startsWith('downloads_folder_') && k.endsWith('_uri'))
+        .toList();
   }
 }

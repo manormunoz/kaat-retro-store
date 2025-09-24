@@ -1,10 +1,12 @@
 {
-    "initDb": "Initializing the database",
+    "initDb": "Initializing the database, do not close Kaat",
     "version": "Version",
     "configuration": "Configuration",
     "darkTheme": "Dark theme",
     "lightTheme": "Light theme",
     "labelGoBack": "Go back",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
     "systemLanguage": "Sistema",
     "labelSave": "Save",
     "authCancelButton": "Cancel",
@@ -47,5 +49,9 @@
     "downloadsStatusWaitingToRetry": "Waiting to retry",
     "downloadsStatusNotFound": "Not found",
     "downloadsRomAdded": "ROM added to the download list",
-    "downloadsActionDownload": "Download"
+    "downloadsActionDownload": "Download",
+    "downloadsSelectFolderRequired": "A folder must be selected",
+    "downloadsFoldersReferencesRemoved": "{total} folder reference(s) removed",
+    "downloadsFolderSelectionOnceTitle": "Select folder",
+    "downloadsFolderSelectionOnceMsg": "Folder selection is only once per platform"
 }

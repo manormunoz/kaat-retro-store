@@ -78,16 +78,40 @@ class DownloadPage extends StatelessWidget {
           },
         );
       }),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () async {
-          await controller.clearCompleted();
-          if (!context.mounted) return;
-          Get.showSnackbar(AppSnackbar(
-            SnackbarType.info,
-            AppLocalizations.of(context)!.downloadsDownloadsCleared,
-          ));
-        },
-        child: const Icon(Icons.delete_sweep_rounded),
+      floatingActionButton: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          // Botón para borrar descargas completadas
+          FloatingActionButton(
+            heroTag: 'clearCompleted',
+            onPressed: () async {
+              await controller.clearCompleted();
+              if (!context.mounted) return;
+              Get.showSnackbar(AppSnackbar(
+                SnackbarType.success,
+                AppLocalizations.of(context)!.downloadsDownloadsCleared,
+              ));
+            },
+            child: const Icon(Icons.delete_sweep_rounded),
+          ),
+          const SizedBox(height: 12), // espacio entre botones
+
+          // Botón para borrar los keys guardados de folderUri
+          FloatingActionButton(
+            heroTag: 'clearFolderUris',
+            backgroundColor: Colors.redAccent,
+            onPressed: () async {
+              final total = await controller.removeAllDownloadFolderUris();
+              if (!context.mounted) return;
+              Get.showSnackbar(AppSnackbar(
+                SnackbarType.success,
+                AppLocalizations.of(context)!
+                    .downloadsFoldersReferencesRemoved(total),
+              ));
+            },
+            child: const Icon(Icons.folder_off_rounded),
+          ),
+        ],
       ),
       endDrawer: const AppDrawer(),
     );

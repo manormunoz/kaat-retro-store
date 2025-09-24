@@ -1,10 +1,12 @@
 {
-    "initDb": "Inicializando la base de datos",
+    "initDb": "Inicializando la base de datos, no cerrar Kaat",
     "version": "Versión",
     "configuration": "Configuración",
     "darkTheme": "Tema obscuro",
     "lightTheme": "Tema claro",
     "labelGoBack": "Regresar",
+    "cancel": "Cancelar",
+    "confirm": "Aceptar",
     "systemLanguage": "Sistema",
     "labelSave": "Guardar",
     "authCancelButton": "Cancelar",
@@ -48,5 +50,9 @@
     "downloadsStatusWaitingToRetry": "Pendiente de reintento",
     "downloadsStatusNotFound": "No encontrado",
     "downloadsRomAdded": "ROM agregado a la lista de descargas",
-    "downloadsActionDownload": "Descargar"
+    "downloadsActionDownload": "Descargar",
+    "downloadsSelectFolderRequired": "Es necesario seleccionar una carpeta",
+    "downloadsFoldersReferencesRemoved": "{total} Referencia(s) a carpetas eliminadas",
+    "downloadsFolderSelectionOnceTitle": "Seleccionar carpeta",
+    "downloadsFolderSelectionOnceMsg": "La selección de carpeta es sólo una vez por plataforma"
 }

@@ -197,23 +197,23 @@ class RomModalBottomSheet extends StatelessWidget {
             },
           ),
         ),
-        const SizedBox(width: 8),
-        Expanded(
-          child: OutlinedButton.icon(
-            icon: const Icon(Icons.download_rounded),
-            label: Text(AppLocalizations.of(context)!.downloadsActionDownload),
-            onPressed: () async {
-              await downloadController.enqueue(url: url, subdir: platformAbbr);
-              if (!context.mounted) return;
-              Get.showSnackbar(
-                AppSnackbar(
-                  SnackbarType.info,
-                  AppLocalizations.of(context)!.downloadsRomAdded,
-                ),
-              );
-            },
-          ),
-        ),
+        // const SizedBox(width: 8),
+        // Expanded(
+        //   child: OutlinedButton.icon(
+        //     icon: const Icon(Icons.download_rounded),
+        //     label: Text(AppLocalizations.of(context)!.downloadsActionDownload),
+        //     onPressed: () async {
+        //       await downloadController.enqueue(url: url, subdir: platformAbbr);
+        //       if (!context.mounted) return;
+        //       Get.showSnackbar(
+        //         AppSnackbar(
+        //           SnackbarType.info,
+        //           AppLocalizations.of(context)!.downloadsRomAdded,
+        //         ),
+        //       );
+        //     },
+        //   ),
+        // ),
       ],
     );
   }

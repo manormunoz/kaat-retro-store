@@ -101,7 +101,7 @@ abstract class AppLocalizations {
   /// No description provided for @initDb.
   ///
   /// In en, this message translates to:
-  /// **'Initializing the database'**
+  /// **'Initializing the database, do not close Kaat'**
   String get initDb;
 
   /// No description provided for @version.
@@ -133,6 +133,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Go back'**
   String get labelGoBack;
+
+  /// No description provided for @cancel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get cancel;
+
+  /// No description provided for @confirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm'**
+  String get confirm;
 
   /// No description provided for @systemLanguage.
   ///
@@ -391,6 +403,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Download'**
   String get downloadsActionDownload;
+
+  /// No description provided for @downloadsSelectFolderRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'A folder must be selected'**
+  String get downloadsSelectFolderRequired;
+
+  /// No description provided for @downloadsFoldersReferencesRemoved.
+  ///
+  /// In en, this message translates to:
+  /// **'{total} folder reference(s) removed'**
+  String downloadsFoldersReferencesRemoved(Object total);
+
+  /// No description provided for @downloadsFolderSelectionOnceTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Select folder'**
+  String get downloadsFolderSelectionOnceTitle;
+
+  /// No description provided for @downloadsFolderSelectionOnceMsg.
+  ///
+  /// In en, this message translates to:
+  /// **'Folder selection is only once per platform'**
+  String get downloadsFolderSelectionOnceMsg;
 }
 
 class _AppLocalizationsDelegate

@@ -37,7 +37,6 @@ class DbService {
   }
 
   FutureOr<void> _onCreate(Database db, int version) async {
-    debugPrint('ENTRA----------------------');
     await db.execute('''
       CREATE TABLE IF NOT EXISTS platforms (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
