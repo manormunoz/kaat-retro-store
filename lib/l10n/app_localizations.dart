@@ -457,6 +457,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Forget the folders previously authorized for downloads.'**
   String get downloadsClearFolderPermissionsDescription;
+
+  /// No description provided for @noConnectionDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Check your internet connection and try again.'**
+  String get noConnectionDescription;
 }
 
 class _AppLocalizationsDelegate

@@ -58,5 +58,6 @@
     "downloadsActionsButton": "More actions",
     "downloadsClearAllDescription": "Clears the list of completed and canceled downloads.",
     "downloadsClearFolderPermissionsTitle": "Remove folder permissions",
-    "downloadsClearFolderPermissionsDescription": "Forget the folders previously authorized for downloads."
+    "downloadsClearFolderPermissionsDescription": "Forget the folders previously authorized for downloads.",
+    "noConnectionDescription": "Check your internet connection and try again."
 }

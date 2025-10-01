@@ -59,5 +59,6 @@
     "downloadsActionsButton": "Más acciones",
     "downloadsClearAllDescription": "Limpia la lista de descargas completadas y canceladas.",
     "downloadsClearFolderPermissionsTitle": "Eliminar permisos de carpetas",
-    "downloadsClearFolderPermissionsDescription": "Olvida las carpetas autorizadas previamente para las descargas."
+    "downloadsClearFolderPermissionsDescription": "Olvida las carpetas autorizadas previamente para las descargas.",
+    "noConnectionDescription": "Revisa tu conexión a internet e inténtalo de nuevo."
 }

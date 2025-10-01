@@ -195,4 +195,8 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get downloadsClearFolderPermissionsDescription =>
       'Forget the folders previously authorized for downloads.';
+
+  @override
+  String get noConnectionDescription =>
+      'Check your internet connection and try again.';
 }
