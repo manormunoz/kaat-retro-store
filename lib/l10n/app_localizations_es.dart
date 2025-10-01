@@ -133,7 +133,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get downloadsNoActiveDownloads => 'No hay descargas activas';
 
   @override
-  String get downloadsDownloadsCleared => 'Descargas borradas';
+  String get downloadsDownloadsCleared => 'Historial de descargas limpiado';
 
   @override
   String get downloadsStatusEnqueued => 'En cola';

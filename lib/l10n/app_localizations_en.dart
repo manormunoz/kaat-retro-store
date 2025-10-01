@@ -131,7 +131,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get downloadsNoActiveDownloads => 'No active downloads';
 
   @override
-  String get downloadsDownloadsCleared => 'Download cleared';
+  String get downloadsDownloadsCleared => 'Downloads cleared';
 
   @override
   String get downloadsStatusEnqueued => 'Enqueued';

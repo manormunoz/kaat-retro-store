@@ -40,7 +40,7 @@
     "ssSaveButton": "Guardar",
     "downloadsTitle": "Descargas",
     "downloadsNoActiveDownloads": "No hay descargas activas",
-    "downloadsDownloadsCleared": "Descargas borradas",
+    "downloadsDownloadsCleared": "Historial de descargas limpiado",
     "downloadsStatusEnqueued": "En cola",
     "downloadsStatusRunning": "Descargando",
     "downloadsStatusComplete": "Completado",

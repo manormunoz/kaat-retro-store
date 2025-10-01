@@ -39,7 +39,7 @@
     "ssSaveButton": "Save",
     "downloadsTitle": "Downloads",
     "downloadsNoActiveDownloads": "No active downloads",
-    "downloadsDownloadsCleared": "Download cleared",
+    "downloadsDownloadsCleared": "Downloads cleared",
     "downloadsStatusEnqueued": "Enqueued",
     "downloadsStatusRunning": "Downloading",
     "downloadsStatusComplete": "Completed",

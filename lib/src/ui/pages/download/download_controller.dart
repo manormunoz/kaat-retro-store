@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
@@ -6,7 +7,6 @@ import 'package:background_downloader/background_downloader.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:kaat/l10n/app_localizations.dart';
 import 'package:kaat/src/ui/widgets/app_snackbar/app_snackbar.dart';
-import 'package:path_provider/path_provider.dart';
 
 class DownloadItem {
   DownloadItem({
@@ -14,14 +14,14 @@ class DownloadItem {
     required this.subdir,
     this.progress = 0.0,
     this.status = TaskStatus.enqueued,
-    this.localPath,
-  });
+    List<String>? imageUrls,
+  }) : imageUrls = List.unmodifiable(imageUrls ?? const []);
 
   final UriDownloadTask task; // guardamos el DownloadTask
   double progress; // 0..1
   TaskStatus status;
-  String? localPath;
   String subdir;
+  final List<String> imageUrls;
 
   String get taskId => task.taskId;
   String get filename => task.filename;
@@ -63,25 +63,13 @@ class DownloadItem {
 
 class DownloadController extends GetxController {
   final downloads = <String, DownloadItem>{}.obs; // taskId -> item
-  late final String _baseDir;
   final _box = GetStorage();
+  StreamSubscription<TaskRecord>? _databaseSubscription;
 
   @override
   Future<void> onInit() async {
     super.onInit();
 
-    final dir = await getApplicationSupportDirectory();
-    _baseDir = dir.path;
-
-    // await FileDownloader().configure(
-    //   globalConfig: [
-    //     // activa holding queue
-    //     (Config.holdingQueue, (10, 2, null)),
-
-    //     // desactiva logs globales
-    //     ('logging', Config.never),
-    //   ],
-    // );
     await FileDownloader().configure(globalConfig: [
       (Config.holdingQueue, (10, 2, null)),
       (Config.requestTimeout, const Duration(seconds: 100)),
@@ -93,6 +81,36 @@ class DownloadController extends GetxController {
       (Config.localize, {'Cancel': 'StopIt'}),
     ]);
     // debugPrint('Configuration result = $result');
+
+    // Registering a callback and configure notifications
+    FileDownloader()
+        .registerCallbacks(taskNotificationTapCallback:
+            (Task task, NotificationType notificationType) {
+          debugPrint(
+              'Tapped notification $notificationType for taskId ${task.taskId}');
+        })
+        .configureNotificationForGroup(FileDownloader.defaultGroup,
+            // For the main download button
+            // which uses 'enqueue' and a default group
+            running: const TaskNotification('Downloading {displayName}',
+                '{progress} • {networkSpeed} • {timeRemaining} remaining'),
+            complete:
+                const TaskNotification('{displayName}', 'Download complete'),
+            error: const TaskNotification('{displayName}', 'Download failed'),
+            paused: const TaskNotification(
+                '{displayName}', 'Paused with metadata {metadata}'),
+            canceled:
+                const TaskNotification('Download {displayName}', 'Canceled'),
+            progressBar: true)
+        .configureNotification(
+          // but the .await group so won't use the above config
+          running: const TaskNotification('Downloading {displayName}',
+              '{progress} • {networkSpeed} • {timeRemaining} remaining'),
+          complete:
+              TaskNotification('Download finished', 'file: {displayName}'),
+          progressBar: true,
+          tapOpensFile: true,
+        ); // dog can also open directly from tap
 
     // Un solo stream para status + progreso
     FileDownloader().updates.listen((update) async {
@@ -112,19 +130,10 @@ class DownloadController extends GetxController {
           if (uri == null && update.status == TaskStatus.complete) {
             // ruta final del archivo (si la necesitas)
             try {
-              final path = await update.task.filePath();
-              debugPrint(
-                '-----------------------------------------------------------------------------------------------------------------------------------------------------',
-              );
-              debugPrint(path);
-              it.localPath = path;
-              final finalPath = await moveDownloadToSharedStorageById(
+              await moveDownloadToSharedStorageById(
                 id,
                 directory: it.subdir,
               );
-              if (finalPath != null) {
-                it.localPath = finalPath; // ahora apunta a /Download/...
-              }
             } catch (_) {}
           }
           downloads.refresh();
@@ -132,9 +141,21 @@ class DownloadController extends GetxController {
       }
     });
     await FileDownloader().start();
+    await _restoreDownloadsFromDb();
+    _databaseSubscription = FileDownloader().database.updates.listen((record) {
+      _upsertFromRecord(record).then((changed) {
+        if (changed) {
+          downloads.refresh();
+        }
+      });
+    });
   }
 
-  // ==================== CONSULTAS POR ESTADO ====================
+  @override
+  void onClose() {
+    _databaseSubscription?.cancel();
+    super.onClose();
+  }
 
   /// Obtiene todas las descargas que están actualmente en progreso
   List<DownloadItem> get downloadsInProgress {
@@ -175,8 +196,6 @@ class DownloadController extends GetxController {
     return downloads.values.where((item) => item.isCanceled).toList();
   }
 
-  // ==================== CONSULTAS POR SUBDIRECTORIO ====================
-
   /// Obtiene descargas por subdirectorio específico
   List<DownloadItem> getDownloadsBySubdir(String subdir) {
     return downloads.values.where((item) => item.subdir == subdir).toList();
@@ -195,8 +214,6 @@ class DownloadController extends GetxController {
         .where((item) => item.subdir == subdir && item.isCompleted)
         .toList();
   }
-
-  // ==================== ESTADÍSTICAS ====================
 
   /// Contador de descargas en progreso
   int get inProgressCount => downloadsInProgress.length;
@@ -234,8 +251,6 @@ class DownloadController extends GetxController {
         'canceled': canceledDownloads.length,
       };
 
-  // ==================== BÚSQUEDA Y FILTRADO ====================
-
   /// Busca descargas por nombre de archivo
   List<DownloadItem> searchByFilename(String query) {
     final lowerQuery = query.toLowerCase();
@@ -260,26 +275,13 @@ class DownloadController extends GetxController {
   /// Verifica si hay descargas en progreso
   bool get hasDownloadsInProgress => inProgressCount > 0;
 
-  // ==================== MÉTODOS ORIGINALES ====================
-
   Future<String?> moveDownloadToSharedStorageById(
     String taskId, {
     required String directory,
     String? mimeType,
   }) async {
     SharedStorage storage = SharedStorage.downloads;
-    // if (Platform.isIOS) {
-    //   // En iOS usa documents, que es accesible por el usuario a través de Files app
-    //   storage = SharedStorage.files;
-    // } else if (Platform.isAndroid) {
-    //   // En Android usa downloads
-    //   storage = SharedStorage.downloads;
-    // } else {
-    //   // Para otras plataformas, usa documents como fallback
-    //   storage = SharedStorage.files;
-    // }
 
-    // 1) Intenta recuperar el DownloadTask original
     final task = await FileDownloader().taskForId(taskId);
     if (task is DownloadTask) {
       return FileDownloader().moveToSharedStorage(
@@ -290,7 +292,6 @@ class DownloadController extends GetxController {
       );
     }
 
-    // 2) Fallback: usa la base para obtener la ruta y mover por filePath
     final rec = await FileDownloader().database.recordForId(taskId);
     final path = await rec?.task.filePath();
     final filePath = path ??
@@ -310,33 +311,36 @@ class DownloadController extends GetxController {
     return null;
   }
 
-  Future<void> clearCompleted() async {
+  Future<void> clear() async {
     final toRemove = <String>[];
 
     for (var entry in downloads.entries) {
       final id = entry.key;
       final item = entry.value;
-
-      if (item.status == TaskStatus.complete) {
-        // 1. Borrar archivo si existe
-        if (item.localPath != null) {
-          final file = File(item.localPath!);
-          if (await file.exists()) {
-            await file.delete();
-          }
-        }
-
-        // 2. Borrar registro del plugin
-        await FileDownloader().database.deleteRecordWithId(id);
-
-        // 3. Marcar para limpiar del mapa
-        toRemove.add(id);
+      if (item.status == TaskStatus.canceled ||
+          item.status == TaskStatus.failed) {
+        await _deleteTaskFile(item.task);
       }
+      await FileDownloader().database.deleteRecordWithId(id);
+      toRemove.add(id);
     }
 
-    // 4. Limpiar del observable
     for (var id in toRemove) {
       downloads.remove(id);
+    }
+  }
+
+  /// Attempt to get permissions if not already granted
+  Future<void> getPermission(PermissionType permissionType) async {
+    var status = await FileDownloader().permissions.status(permissionType);
+    if (status != PermissionStatus.granted) {
+      if (await FileDownloader()
+          .permissions
+          .shouldShowRationale(permissionType)) {
+        debugPrint('Showing some rationale');
+      }
+      status = await FileDownloader().permissions.request(permissionType);
+      debugPrint('Permission for $permissionType was $status');
     }
   }
 
@@ -346,7 +350,9 @@ class DownloadController extends GetxController {
     required String subdir, // p.ej. 'roms'
     String? filename,
     bool requiresWifi = false,
+    List<String>? imageUrls,
   }) async {
+    await getPermission(PermissionType.notifications);
     final destUri = await pickFolder(subdir);
     if (destUri == null) {
       Get.showSnackbar(AppSnackbar(
@@ -359,35 +365,31 @@ class DownloadController extends GetxController {
     final uri = Uri.parse(url);
     final filenameSfe = filename ??
         (uri.pathSegments.isNotEmpty ? uri.pathSegments.last : 'unknown.file');
+    final normalizedImages = imageUrls
+            ?.where((element) => element.trim().isNotEmpty)
+            .toList(growable: false) ??
+        const <String>[];
+
+    final encodedMeta = _encodeMetaData(subdir, normalizedImages);
 
     final task = UriDownloadTask(
       url: url,
       directoryUri: destUri,
       filename: filenameSfe,
+      displayName: filenameSfe,
+      metaData: encodedMeta,
       updates: Updates.statusAndProgress,
       requiresWiFi: requiresWifi,
-      allowPause: true,
+      allowPause: false,
       retries: 2,
     );
-    //  DownloadTask(
-    //     url: url,
-    //     filename: filenameSfe,
-    //     baseDirectory: BaseDirectory.applicationSupport,
-    //     directory: subdir,
-    //     updates: Updates.statusAndProgress,
-    //     requiresWiFi: requiresWifi,
-    //     allowPause: true,
-    //     retries: 2,
-    //   );
 
-    final localPath = '$_baseDir/$subdir/$filenameSfe';
-    debugPrint(localPath);
     downloads[task.taskId] = DownloadItem(
       task: task,
       progress: 0,
       subdir: subdir,
       status: TaskStatus.enqueued,
-      localPath: localPath,
+      imageUrls: normalizedImages,
     );
 
     await FileDownloader().enqueue(task);
@@ -398,6 +400,9 @@ class DownloadController extends GetxController {
   Future<void> pause(String taskId) async {
     final it = downloads[taskId];
     if (it != null) {
+      if (!it.task.allowPause) {
+        return;
+      }
       await FileDownloader().pause(it.task);
       return;
     }
@@ -413,6 +418,9 @@ class DownloadController extends GetxController {
   Future<void> resume(String taskId) async {
     final it = downloads[taskId];
     if (it != null) {
+      if (!it.task.allowPause) {
+        return;
+      }
       await FileDownloader().resume(it.task);
       return;
     }
@@ -425,12 +433,120 @@ class DownloadController extends GetxController {
 
   /// Cancelar por taskId
   Future<void> cancel(String taskId) async {
+    final existing = downloads[taskId];
+    if (existing != null &&
+        (existing.isCompleted || existing.isFailed || existing.isCanceled)) {
+      return;
+    }
+
     await FileDownloader().cancelTaskWithId(taskId);
     final it = downloads[taskId];
     if (it != null) {
       it.status = TaskStatus.canceled;
       downloads.refresh();
     }
+  }
+
+  Future<void> _restoreDownloadsFromDb() async {
+    final records = await FileDownloader().database.allRecords();
+    var didChange = false;
+    for (final record in records) {
+      final changed = await _upsertFromRecord(record);
+      didChange = didChange || changed;
+    }
+    if (didChange) {
+      downloads.refresh();
+    }
+  }
+
+  Future<bool> _upsertFromRecord(TaskRecord record) async {
+    final task = record.task;
+    if (task is! UriDownloadTask) {
+      return false;
+    }
+
+    final meta = _decodeMetaData(task.metaData, fallbackSubdir: task.group);
+    final newItem = DownloadItem(
+      task: task,
+      subdir: meta.subdir,
+      progress: record.progress,
+      status: record.status,
+      imageUrls: meta.imageUrls,
+    );
+
+    final previous = downloads[task.taskId];
+    final changed = previous == null ||
+        previous.progress != newItem.progress ||
+        previous.status != newItem.status ||
+        previous.subdir != newItem.subdir ||
+        !listEquals(previous.imageUrls, newItem.imageUrls);
+
+    downloads[task.taskId] = newItem;
+    return changed;
+  }
+
+  String _encodeMetaData(String subdir, List<String> images) {
+    final payload = <String, dynamic>{'subdir': subdir};
+    if (images.isNotEmpty) {
+      payload['images'] = images;
+    }
+    return jsonEncode(payload);
+  }
+
+  ({String subdir, List<String> imageUrls}) _decodeMetaData(
+    String metaData, {
+    required String fallbackSubdir,
+  }) {
+    if (metaData.isEmpty) {
+      return (subdir: fallbackSubdir, imageUrls: const []);
+    }
+    try {
+      final decoded = jsonDecode(metaData);
+      if (decoded is Map<String, dynamic>) {
+        final subdir = (decoded['subdir'] as String?)?.trim().isNotEmpty == true
+            ? (decoded['subdir'] as String).trim()
+            : fallbackSubdir;
+        final images = (decoded['images'] as List?)
+                ?.whereType<String>()
+                .map((e) => e.trim())
+                .where((e) => e.isNotEmpty)
+                .toList(growable: false) ??
+            const <String>[];
+        return (subdir: subdir, imageUrls: images);
+      }
+      if (decoded is String) {
+        final value = decoded.trim();
+        if (value.isNotEmpty) {
+          return (subdir: value, imageUrls: const []);
+        }
+      }
+    } catch (_) {
+      // fall back to legacy behavior
+    }
+    final fallback =
+        metaData.trim().isNotEmpty ? metaData.trim() : fallbackSubdir;
+    return (subdir: fallback, imageUrls: const []);
+  }
+
+  Future<void> _deleteTaskFile(Task task) async {
+    if (task is UriDownloadTask) {
+      final uri = task.fileUri;
+      if (uri != null) {
+        await FileDownloader().uri.deleteFile(uri);
+        return;
+      }
+    }
+
+    try {
+      final path = await task.filePath();
+      if (path.isEmpty) {
+        return;
+      }
+      final file = File(path);
+      if (await file.exists()) {
+        await file.delete();
+      }
+    } catch (_) {}
   }
 
   /// Obtener el File descargado a partir del taskId

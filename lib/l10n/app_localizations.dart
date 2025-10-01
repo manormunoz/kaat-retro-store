@@ -341,7 +341,7 @@ abstract class AppLocalizations {
   /// No description provided for @downloadsDownloadsCleared.
   ///
   /// In en, this message translates to:
-  /// **'Download cleared'**
+  /// **'Downloads cleared'**
   String get downloadsDownloadsCleared;
 
   /// No description provided for @downloadsStatusEnqueued.

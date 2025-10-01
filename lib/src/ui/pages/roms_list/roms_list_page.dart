@@ -121,6 +121,7 @@ class RomsListPage extends GetView<RomsListController> {
                                 await downloadController.enqueue(
                                   url: url,
                                   subdir: platformAbbr,
+                                  imageUrls: [boxart, logo],
                                 );
                               }
                             },
