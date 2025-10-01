@@ -150,7 +150,10 @@ class _NavigationTile extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
       child: ListTile(
-        leading: Icon(icon, color: iconColor ?? scheme.onSurface),
+        leading: Icon(
+          icon,
+          color: iconColor ?? scheme.onSurfaceVariant,
+        ),
         title: Text(label),
         trailing: const Icon(Icons.chevron_right_rounded),
         onTap: onTap,
@@ -178,7 +181,10 @@ class _InteractiveSettingTile extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
       child: ListTile(
-        leading: Icon(icon, color: scheme.onSurface),
+        leading: Icon(
+          icon,
+          color: scheme.onSurfaceVariant,
+        ),
         title: Text(title),
         subtitle: Text(subtitle),
         onTap: onTap,

@@ -6,25 +6,22 @@ import 'package:url_launcher/url_launcher.dart';
 class CreditsPage extends StatelessWidget {
   const CreditsPage({super.key});
 
-  Future<void> _open(String url) async {
-    final uri = Uri.parse(url);
+  Future<void> _open(Uri uri) async {
     if (!await launchUrl(uri, mode: LaunchMode.externalApplication)) {
-      throw Exception('Could not launch $url');
+      throw Exception('Could not launch ${uri.toString()}');
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    // final CreditsController controller = Get.find<CreditsController>();
-    final cs = Theme.of(context).colorScheme;
+    final theme = Theme.of(context);
+    final scheme = theme.colorScheme;
     Widget sectionTitle(String text) => Padding(
-          padding: const EdgeInsets.fromLTRB(16, 24, 16, 8),
+          padding: const EdgeInsets.fromLTRB(20, 24, 20, 8),
           child: Text(
             text,
-            style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  color: cs.onSurface,
-                  fontWeight: FontWeight.w600,
-                ),
+            style: theme.textTheme.titleMedium
+                ?.copyWith(fontWeight: FontWeight.w600),
           ),
         );
     return Scaffold(
@@ -34,120 +31,139 @@ class CreditsPage extends StatelessWidget {
         icon: Icon(Icons.favorite_rounded, color: Colors.red),
       ),
       body: ListView(
-        padding: const EdgeInsets.symmetric(vertical: 8),
+        padding: const EdgeInsets.only(bottom: 24),
         children: [
           sectionTitle(AppLocalizations.of(context)!.creditsProjectsTitle),
-          ListTile(
-            leading: const Icon(Icons.storage_rounded),
-            title: const Text('Myrient'),
-            subtitle: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'https://myrient.erista.me/',
-                  style: TextStyle(color: Color(0xFF1A73E8)),
-                ),
-                Text(AppLocalizations.of(context)!.creditsMyrient),
-              ],
-            ),
-            trailing: IconButton(
-              icon: const Icon(Icons.open_in_new_rounded),
-              tooltip: 'Myrient',
-              onPressed: () => _open('https://myrient.erista.me/'),
-            ),
+          _CreditTile(
+            icon: Icons.storage_rounded,
+            title: 'Myrient',
+            url: Uri.parse('https://myrient.erista.me'),
+            description: AppLocalizations.of(context)!.creditsMyrient,
+            onTap: _open,
           ),
-          const Divider(height: 1),
-          ListTile(
-            leading: const Icon(Icons.cloud_rounded),
-            title: const Text('jsDelivr'),
-            subtitle: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'https://www.jsdelivr.com/',
-                  style: TextStyle(color: Color(0xFF1A73E8)),
-                ),
-                Text(AppLocalizations.of(context)!.creditsJsDelivr),
-              ],
-            ),
-            trailing: IconButton(
-              icon: const Icon(Icons.open_in_new_rounded),
-              tooltip: 'jsDelivr',
-              onPressed: () => _open('https://www.jsdelivr.com/'),
-            ),
+          _CreditTile(
+            icon: Icons.cloud_rounded,
+            title: 'jsDelivr',
+            url: Uri.parse('https://www.jsdelivr.com'),
+            description: AppLocalizations.of(context)!.creditsJsDelivr,
+            onTap: _open,
           ),
-          const Divider(height: 1),
-          ListTile(
-            leading: const Icon(Icons.extension_rounded),
-            title: const Text('Libretro / RetroArch'),
-            subtitle: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'https://www.libretro.com/',
-                  style: TextStyle(color: Color(0xFF1A73E8)),
-                ),
-                Text(AppLocalizations.of(context)!.creditsLibretro),
-              ],
-            ),
-            trailing: IconButton(
-              icon: const Icon(Icons.open_in_new_rounded),
-              tooltip: 'Libretro / RetroArch',
-              onPressed: () => _open('https://www.libretro.com/'),
-            ),
+          _CreditTile(
+            icon: Icons.extension_rounded,
+            title: 'Libretro / RetroArch',
+            url: Uri.parse('https://www.libretro.com'),
+            description: AppLocalizations.of(context)!.creditsLibretro,
+            onTap: _open,
           ),
-          const Divider(height: 1),
-          ListTile(
-            leading: const Icon(Icons.image_rounded),
-            title: const Text('libretro-thumbnails'),
-            subtitle: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'https://github.com/libretro-thumbnails',
-                  style: TextStyle(color: Color(0xFF1A73E8)),
-                ),
-                Text(AppLocalizations.of(context)!.creditsLibretroThumbs),
-              ],
-            ),
-            trailing: IconButton(
-              icon: const Icon(Icons.open_in_new_rounded),
-              tooltip: 'libretro-thumbnails',
-              onPressed: () => _open('https://github.com/libretro-thumbnails'),
-            ),
+          _CreditTile(
+            icon: Icons.image_rounded,
+            title: 'libretro-thumbnails',
+            url: Uri.parse('https://github.com/libretro-thumbnails'),
+            description: AppLocalizations.of(context)!.creditsLibretroThumbs,
+            onTap: _open,
           ),
-          const Divider(height: 1),
-          ListTile(
-            leading: const Icon(Icons.image_rounded),
-            title: const Text('ScreenScraper'),
-            subtitle: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'https://www.screenscraper.fr/',
-                  style: TextStyle(color: Color(0xFF1A73E8)),
-                ),
-                Text(AppLocalizations.of(context)!.creditsScreenScraper),
-              ],
-            ),
-            trailing: IconButton(
-              icon: const Icon(Icons.open_in_new_rounded),
-              tooltip: 'ScreenScraper',
-              onPressed: () => _open('https://www.screenscraper.fr/'),
-            ),
+          _CreditTile(
+            icon: Icons.image_rounded,
+            title: 'ScreenScraper',
+            url: Uri.parse('https://www.screenscraper.fr'),
+            description: AppLocalizations.of(context)!.creditsScreenScraper,
+            onTap: _open,
           ),
           sectionTitle(AppLocalizations.of(context)!.creditsNotesTitle),
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
+            padding: const EdgeInsets.symmetric(horizontal: 20),
             child: Text(
               AppLocalizations.of(context)!.creditsNotes,
-              style: Theme.of(
-                context,
-              ).textTheme.bodyMedium?.copyWith(color: cs.onSurfaceVariant),
+              style: theme.textTheme.bodyMedium
+                  ?.copyWith(color: scheme.onSurfaceVariant),
             ),
           ),
-          const SizedBox(height: 24),
         ],
+      ),
+    );
+  }
+}
+
+class _CreditTile extends StatelessWidget {
+  const _CreditTile({
+    required this.icon,
+    required this.title,
+    required this.url,
+    required this.description,
+    required this.onTap,
+  });
+
+  final IconData icon;
+  final String title;
+  final Uri url;
+  final String description;
+  final Future<void> Function(Uri) onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final scheme = theme.colorScheme;
+    final textTheme = theme.textTheme;
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+      child: Card(
+        clipBehavior: Clip.antiAlias,
+        elevation: 0,
+        color: scheme.surface,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+          side: BorderSide(color: scheme.outlineVariant.withValues(alpha: 0.3)),
+        ),
+        child: InkWell(
+          onTap: () => onTap(url),
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Icon(
+                  icon,
+                  color: scheme.onSurfaceVariant,
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        title,
+                        style: textTheme.titleMedium?.copyWith(
+                          fontWeight: FontWeight.w600,
+                          color: scheme.onSurface,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        url.toString(),
+                        style: textTheme.bodySmall?.copyWith(
+                          color: scheme.primary,
+                          decoration: TextDecoration.underline,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        description,
+                        style: textTheme.bodySmall
+                            ?.copyWith(color: scheme.onSurfaceVariant),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Icon(
+                  Icons.open_in_new_rounded,
+                  color: scheme.onSurfaceVariant,
+                  size: 20,
+                ),
+              ],
+            ),
+          ),
+        ),
       ),
     );
   }
