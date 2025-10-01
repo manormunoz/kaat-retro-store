@@ -18,10 +18,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get configuration => 'Configuration';
 
   @override
-  String get darkTheme => 'Dark theme';
+  String get darkTheme => 'Dark';
 
   @override
-  String get lightTheme => 'Light theme';
+  String get lightTheme => 'Light';
 
   @override
   String get labelGoBack => 'Go back';
@@ -33,7 +33,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get confirm => 'Confirm';
 
   @override
-  String get systemLanguage => 'Sistema';
+  String get systemLanguage => 'System';
 
   @override
   String get labelSave => 'Save';
@@ -199,4 +199,10 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get noConnectionDescription =>
       'Check your internet connection and try again.';
+
+  @override
+  String get themeSetting => 'Theme';
+
+  @override
+  String get languageSetting => 'Language';
 }

@@ -119,13 +119,13 @@ abstract class AppLocalizations {
   /// No description provided for @darkTheme.
   ///
   /// In en, this message translates to:
-  /// **'Dark theme'**
+  /// **'Dark'**
   String get darkTheme;
 
   /// No description provided for @lightTheme.
   ///
   /// In en, this message translates to:
-  /// **'Light theme'**
+  /// **'Light'**
   String get lightTheme;
 
   /// No description provided for @labelGoBack.
@@ -149,7 +149,7 @@ abstract class AppLocalizations {
   /// No description provided for @systemLanguage.
   ///
   /// In en, this message translates to:
-  /// **'Sistema'**
+  /// **'System'**
   String get systemLanguage;
 
   /// No description provided for @labelSave.
@@ -463,6 +463,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Check your internet connection and try again.'**
   String get noConnectionDescription;
+
+  /// No description provided for @themeSetting.
+  ///
+  /// In en, this message translates to:
+  /// **'Theme'**
+  String get themeSetting;
+
+  /// No description provided for @languageSetting.
+  ///
+  /// In en, this message translates to:
+  /// **'Language'**
+  String get languageSetting;
 }
 
 class _AppLocalizationsDelegate

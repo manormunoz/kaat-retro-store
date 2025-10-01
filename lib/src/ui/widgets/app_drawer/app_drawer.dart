@@ -11,162 +11,177 @@ class AppDrawer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final AppController appController = Get.find<AppController>();
-    final ThemeController themeController = Get.find<ThemeController>();
-    final LanguageController languageController =
-        Get.find<LanguageController>();
-    return Drawer(
-      child: Column(
-        children: [
-          Flexible(
-            child: ListView(
-              children: [
-                SizedBox(
-                  height: 90.0,
-                  child: DrawerHeader(
-                    child: Column(
-                      children: [
-                        Row(
-                          children: [
-                            Text(
-                              AppLocalizations.of(context)!.configuration,
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .titleLarge!
-                                  .copyWith(
-                                    color: Theme.of(
-                                      context,
-                                    ).colorScheme.onSurface,
-                                    fontWeight: FontWeight.w400,
-                                  ),
-                            ),
-                            Expanded(
-                              child: Align(
-                                alignment: Alignment.centerRight,
-                                child: IconButton(
-                                  onPressed: () => Get.back(),
-                                  icon: Icon(
-                                    Icons.close_rounded,
-                                    color: Theme.of(context).hintColor,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
+    final appController = Get.find<AppController>();
+    final themeController = Get.find<ThemeController>();
+    final languageController = Get.find<LanguageController>();
+
+    return Obx(() {
+      final theme = Theme.of(context);
+      final scheme = theme.colorScheme;
+      final l10n = AppLocalizations.of(context)!;
+      final material = MaterialLocalizations.of(context);
+      final isDark = themeController.isDark;
+      final currentLocaleCode =
+          languageController.locale.value?.languageCode.toUpperCase() ??
+              l10n.systemLanguage;
+
+      return Drawer(
+        child: SafeArea(
+          child: Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.fromLTRB(20, 16, 12, 8),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            l10n.configuration,
+                            style: theme.textTheme.titleLarge
+                                ?.copyWith(fontWeight: FontWeight.w600),
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
+                    IconButton(
+                      tooltip: material.closeButtonLabel,
+                      onPressed: () => Navigator.of(context).maybePop(),
+                      icon: const Icon(Icons.close_rounded),
+                    ),
+                  ],
                 ),
-                Obx(
-                  () => Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 5.0,
-                      vertical: 3,
+              ),
+              const Divider(height: 1),
+              Expanded(
+                child: ListView(
+                  padding: const EdgeInsets.symmetric(vertical: 8),
+                  children: [
+                    _InteractiveSettingTile(
+                      icon: isDark
+                          ? Icons.nightlight_round
+                          : Icons.wb_sunny_rounded,
+                      title: l10n.themeSetting,
+                      subtitle: isDark ? l10n.darkTheme : l10n.lightTheme,
+                      onTap: themeController.toggle,
                     ),
-                    child: ListTile(
-                      leading: Icon(
-                        themeController.isDark
-                            ? Icons.light_mode_rounded
-                            : Icons.dark_mode_rounded,
-                      ),
-                      title: Text(
-                        themeController.isDark
-                            ? AppLocalizations.of(context)!.lightTheme
-                            : AppLocalizations.of(context)!.darkTheme,
-                      ),
+                    _InteractiveSettingTile(
+                      icon: Icons.translate_rounded,
+                      title: l10n.languageSetting,
+                      subtitle: currentLocaleCode,
+                      onTap: languageController.nextLocale,
+                    ),
+                    const Divider(height: 24),
+                    _NavigationTile(
+                      icon: Icons.settings_rounded,
+                      label: l10n.configuration,
                       onTap: () {
-                        themeController.toggle();
+                        Navigator.of(context).maybePop();
+                        Get.toNamed(RouteNames.config);
                       },
                     ),
-                  ),
-                ),
-                Obx(
-                  () => Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 5.0,
-                      vertical: 3,
+                    _NavigationTile(
+                      icon: Icons.favorite_rounded,
+                      iconColor: scheme.error,
+                      label: l10n.creditsTitle,
+                      onTap: () {
+                        Navigator.of(context).maybePop();
+                        Get.toNamed(RouteNames.credits);
+                      },
                     ),
-                    child: ListTile(
-                      leading: Icon(Icons.translate_rounded),
-                      title: Text(
-                        languageController.locale.value?.languageCode
-                                .toUpperCase() ??
-                            AppLocalizations.of(context)!.systemLanguage,
-                      ),
-                      onTap: () => languageController.nextLocale(),
-                    ),
-                  ),
+                  ],
                 ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 5.0,
-                    vertical: 3,
-                  ),
-                  child: ListTile(
-                    leading: Icon(Icons.settings_rounded),
-                    title: Text(AppLocalizations.of(context)!.configuration),
-                    onTap: () {
-                      Get.back();
-                      Get.toNamed(RouteNames.config);
-                    },
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 5.0,
-                    vertical: 3,
-                  ),
-                  child: ListTile(
-                    leading: Icon(Icons.favorite_rounded, color: Colors.red),
-                    title: Text(AppLocalizations.of(context)!.creditsTitle),
-                    onTap: () {
-                      Get.back();
-                      Get.toNamed(RouteNames.credits);
-                    },
-                  ),
-                ),
-                // Padding(
-                //   padding: const EdgeInsets.symmetric(
-                //     horizontal: 5.0,
-                //     vertical: 3,
-                //   ),
-                //   child: ListTile(
-                //     leading: Icon(Icons.downloading_rounded),
-                //     title: Text('Downloads'),
-                //     onTap: () {
-                //       Get.back();
-                //       Get.toNamed(RouteNames.download);
-                //     },
-                //   ),
-                // ),
-              ],
-            ),
-          ),
-          SafeArea(
-            child: Column(
-              children: [
-                const Divider(),
-                Obx(() {
-                  if (!appController.loading) {
+              ),
+              const Divider(height: 1),
+              SafeArea(
+                top: false,
+                child: Padding(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                  child: Obx(() {
+                    if (appController.loading) {
+                      return const SizedBox.shrink();
+                    }
+                    final info = appController.packageInfo;
                     return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          '${appController.packageInfo.appName} ${DateTime.now().year.toString()}',
+                          info.appName,
+                          style: theme.textTheme.labelMedium
+                              ?.copyWith(color: scheme.onSurfaceVariant),
                         ),
+                        const SizedBox(height: 4),
                         Text(
-                          '${AppLocalizations.of(context)!.version} ${appController.packageInfo.version}/${appController.packageInfo.buildNumber}',
+                          '${l10n.version} ${info.version} (build ${info.buildNumber})',
+                          style: theme.textTheme.bodySmall
+                              ?.copyWith(color: scheme.onSurfaceVariant),
                         ),
-                        const SizedBox(height: 4.0),
                       ],
                     );
-                  }
-                  return Container();
-                }),
-              ],
-            ),
+                  }),
+                ),
+              ),
+            ],
           ),
-        ],
+        ),
+      );
+    });
+  }
+}
+
+class _NavigationTile extends StatelessWidget {
+  const _NavigationTile({
+    required this.icon,
+    required this.label,
+    this.iconColor,
+    required this.onTap,
+  });
+
+  final IconData icon;
+  final String label;
+  final Color? iconColor;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+      child: ListTile(
+        leading: Icon(icon, color: iconColor ?? scheme.onSurface),
+        title: Text(label),
+        trailing: const Icon(Icons.chevron_right_rounded),
+        onTap: onTap,
+      ),
+    );
+  }
+}
+
+class _InteractiveSettingTile extends StatelessWidget {
+  const _InteractiveSettingTile({
+    required this.icon,
+    required this.title,
+    required this.subtitle,
+    required this.onTap,
+  });
+
+  final IconData icon;
+  final String title;
+  final String subtitle;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+      child: ListTile(
+        leading: Icon(icon, color: scheme.onSurface),
+        title: Text(title),
+        subtitle: Text(subtitle),
+        onTap: onTap,
       ),
     );
   }

@@ -18,10 +18,10 @@ class AppLocalizationsEs extends AppLocalizations {
   String get configuration => 'Configuración';
 
   @override
-  String get darkTheme => 'Tema obscuro';
+  String get darkTheme => 'Obscuro';
 
   @override
-  String get lightTheme => 'Tema claro';
+  String get lightTheme => 'Claro';
 
   @override
   String get labelGoBack => 'Regresar';
@@ -202,4 +202,10 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get noConnectionDescription =>
       'Revisa tu conexión a internet e inténtalo de nuevo.';
+
+  @override
+  String get themeSetting => 'Tema';
+
+  @override
+  String get languageSetting => 'Idioma';
 }
