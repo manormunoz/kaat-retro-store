@@ -61,5 +61,6 @@
     "downloadsClearFolderPermissionsDescription": "Forget the folders previously authorized for downloads.",
     "noConnectionDescription": "Check your internet connection and try again.",
     "themeSetting": "Theme",
-    "languageSetting": "Language"
+    "languageSetting": "Language",
+    "ssConfigExplanation": "These credentials are stored locally and used only to fetch metadata from ScreenScraper."
 }

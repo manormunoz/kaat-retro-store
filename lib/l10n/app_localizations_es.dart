@@ -208,4 +208,8 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get languageSetting => 'Idioma';
+
+  @override
+  String get ssConfigExplanation =>
+      'Estas credenciales se guardan localmente y solo se usan para obtener metadatos desde ScreenScraper.';
 }

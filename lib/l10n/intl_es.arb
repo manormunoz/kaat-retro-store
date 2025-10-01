@@ -62,5 +62,6 @@
     "downloadsClearFolderPermissionsDescription": "Olvida las carpetas autorizadas previamente para las descargas.",
     "noConnectionDescription": "Revisa tu conexión a internet e inténtalo de nuevo.",
     "themeSetting": "Tema",
-    "languageSetting": "Idioma"
+    "languageSetting": "Idioma",
+    "ssConfigExplanation": "Estas credenciales se guardan localmente y solo se usan para obtener metadatos desde ScreenScraper."
 }

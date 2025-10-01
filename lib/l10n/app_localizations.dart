@@ -475,6 +475,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Language'**
   String get languageSetting;
+
+  /// No description provided for @ssConfigExplanation.
+  ///
+  /// In en, this message translates to:
+  /// **'These credentials are stored locally and used only to fetch metadata from ScreenScraper.'**
+  String get ssConfigExplanation;
 }
 
 class _AppLocalizationsDelegate
