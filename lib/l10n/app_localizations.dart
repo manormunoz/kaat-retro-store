@@ -338,6 +338,12 @@ abstract class AppLocalizations {
   /// **'No active downloads'**
   String get downloadsNoActiveDownloads;
 
+  /// No description provided for @downloadsDownloadsClearBtn.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear downloads'**
+  String get downloadsDownloadsClearBtn;
+
   /// No description provided for @downloadsDownloadsCleared.
   ///
   /// In en, this message translates to:
@@ -427,6 +433,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Folder selection is only once per platform'**
   String get downloadsFolderSelectionOnceMsg;
+
+  /// No description provided for @downloadsActionsButton.
+  ///
+  /// In en, this message translates to:
+  /// **'More actions'**
+  String get downloadsActionsButton;
+
+  /// No description provided for @downloadsClearAllDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Clears the list of completed and canceled downloads.'**
+  String get downloadsClearAllDescription;
+
+  /// No description provided for @downloadsClearFolderPermissionsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove folder permissions'**
+  String get downloadsClearFolderPermissionsTitle;
+
+  /// No description provided for @downloadsClearFolderPermissionsDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Forget the folders previously authorized for downloads.'**
+  String get downloadsClearFolderPermissionsDescription;
 }
 
 class _AppLocalizationsDelegate

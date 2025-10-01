@@ -40,7 +40,8 @@
     "ssSaveButton": "Guardar",
     "downloadsTitle": "Descargas",
     "downloadsNoActiveDownloads": "No hay descargas activas",
-    "downloadsDownloadsCleared": "Historial de descargas limpiado",
+    "downloadsDownloadsClearBtn": "Eliminar descargas",
+    "downloadsDownloadsCleared": "Descargas eliminadas",
     "downloadsStatusEnqueued": "En cola",
     "downloadsStatusRunning": "Descargando",
     "downloadsStatusComplete": "Completado",
@@ -52,7 +53,11 @@
     "downloadsRomAdded": "ROM agregado a la lista de descargas",
     "downloadsActionDownload": "Descargar",
     "downloadsSelectFolderRequired": "Es necesario seleccionar una carpeta",
-    "downloadsFoldersReferencesRemoved": "{total} Referencia(s) a carpetas eliminadas",
+    "downloadsFoldersReferencesRemoved": "Se eliminaron {total} referencias de carpetas",
     "downloadsFolderSelectionOnceTitle": "Seleccionar carpeta",
-    "downloadsFolderSelectionOnceMsg": "La selección de carpeta es sólo una vez por plataforma"
+    "downloadsFolderSelectionOnceMsg": "La selección de carpeta es sólo una vez por plataforma",
+    "downloadsActionsButton": "Más acciones",
+    "downloadsClearAllDescription": "Limpia la lista de descargas completadas y canceladas.",
+    "downloadsClearFolderPermissionsTitle": "Eliminar permisos de carpetas",
+    "downloadsClearFolderPermissionsDescription": "Olvida las carpetas autorizadas previamente para las descargas."
 }

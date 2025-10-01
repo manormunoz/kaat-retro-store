@@ -133,7 +133,10 @@ class AppLocalizationsEs extends AppLocalizations {
   String get downloadsNoActiveDownloads => 'No hay descargas activas';
 
   @override
-  String get downloadsDownloadsCleared => 'Historial de descargas limpiado';
+  String get downloadsDownloadsClearBtn => 'Eliminar descargas';
+
+  @override
+  String get downloadsDownloadsCleared => 'Descargas eliminadas';
 
   @override
   String get downloadsStatusEnqueued => 'En cola';
@@ -171,7 +174,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String downloadsFoldersReferencesRemoved(Object total) {
-    return '$total Referencia(s) a carpetas eliminadas';
+    return 'Se eliminaron $total referencias de carpetas';
   }
 
   @override
@@ -180,4 +183,19 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get downloadsFolderSelectionOnceMsg =>
       'La selección de carpeta es sólo una vez por plataforma';
+
+  @override
+  String get downloadsActionsButton => 'Más acciones';
+
+  @override
+  String get downloadsClearAllDescription =>
+      'Limpia la lista de descargas completadas y canceladas.';
+
+  @override
+  String get downloadsClearFolderPermissionsTitle =>
+      'Eliminar permisos de carpetas';
+
+  @override
+  String get downloadsClearFolderPermissionsDescription =>
+      'Olvida las carpetas autorizadas previamente para las descargas.';
 }

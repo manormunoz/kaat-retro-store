@@ -99,65 +99,6 @@ class DownloadPage extends StatelessWidget {
                 final displayPercent =
                     percentLabel.isNotEmpty ? percentLabel : '--';
 
-                final actions = <Widget>[];
-                if (item.status == TaskStatus.running && item.task.allowPause) {
-                  actions.add(_buildActionButton(
-                    context,
-                    icon: Icons.pause_rounded,
-                    tooltip:
-                        AppLocalizations.of(context)!.downloadsStatusPaused,
-                    color: scheme.primary,
-                    compact: isCompact,
-                    onPressed: () => controller.pause(item.taskId),
-                  ));
-                } else if (item.status == TaskStatus.paused &&
-                    item.task.allowPause) {
-                  actions.add(_buildActionButton(
-                    context,
-                    icon: Icons.play_arrow_rounded,
-                    tooltip:
-                        AppLocalizations.of(context)!.downloadsStatusRunning,
-                    color: scheme.primary,
-                    compact: isCompact,
-                    onPressed: () => controller.resume(item.taskId),
-                  ));
-                }
-                if (canCancel) {
-                  actions.add(_buildActionButton(
-                    context,
-                    icon: Icons.cancel_rounded,
-                    tooltip:
-                        AppLocalizations.of(context)!.downloadsStatusCanceled,
-                    color: scheme.error,
-                    compact: isCompact,
-                    onPressed: () => controller.cancel(item.taskId),
-                  ));
-                }
-
-                Widget? trailing;
-                if (actions.isNotEmpty) {
-                  trailing = isCompact
-                      ? Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: actions
-                              .map((action) => Padding(
-                                    padding: const EdgeInsets.only(left: 4),
-                                    child: action,
-                                  ))
-                              .toList(),
-                        )
-                      : Column(
-                          mainAxisSize: MainAxisSize.min,
-                          crossAxisAlignment: CrossAxisAlignment.end,
-                          children: [
-                            for (var j = 0; j < actions.length; j++) ...[
-                              if (j > 0) const SizedBox(height: 8),
-                              actions[j],
-                            ],
-                          ],
-                        );
-                }
-
                 return Padding(
                   padding: EdgeInsets.symmetric(
                       horizontal: horizontalPadding, vertical: verticalPadding),
@@ -171,49 +112,74 @@ class DownloadPage extends StatelessWidget {
                       ),
                     ),
                     color: scheme.surface,
-                    child: ListTile(
-                      contentPadding: contentPadding,
-                      leading: _buildThumbnail(
-                        item.imageUrls,
-                        scheme,
-                        size: thumbSize,
-                      ),
-                      title: Text(
-                        item.filename,
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                        style: theme.textTheme.titleMedium
-                            ?.copyWith(fontWeight: FontWeight.w600),
-                      ),
-                      subtitle: Column(
+                    child: Padding(
+                      padding: contentPadding,
+                      child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
-                              _buildStatusChip(
-                                context,
-                                item.status,
-                                item.statusDescription,
-                                compact: isCompact,
+                              _buildThumbnail(
+                                item.imageUrls,
+                                scheme,
+                                size: thumbSize,
                               ),
-                              const SizedBox(width: 8),
-                              AnimatedSwitcher(
-                                duration: const Duration(milliseconds: 200),
-                                child: Text(
-                                  displayPercent,
-                                  key: ValueKey(
-                                      '${item.taskId}_$displayPercent'),
-                                  style: theme.textTheme.labelMedium?.copyWith(
-                                    color: scheme.onSurfaceVariant,
-                                    fontFeatures: const [
-                                      FontFeature.tabularFigures(),
-                                    ],
-                                  ),
+                              const SizedBox(width: 12),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      item.filename,
+                                      maxLines: 2,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: theme.textTheme.titleMedium
+                                          ?.copyWith(
+                                              fontWeight: FontWeight.w600),
+                                    ),
+                                    const SizedBox(height: 8),
+                                    Row(
+                                      children: [
+                                        _buildStatusChip(
+                                          context,
+                                          item.status,
+                                          item.statusDescription,
+                                          compact: isCompact,
+                                        ),
+                                        const SizedBox(width: 8),
+                                        AnimatedSwitcher(
+                                          duration:
+                                              const Duration(milliseconds: 200),
+                                          child: Text(
+                                            displayPercent,
+                                            key: ValueKey(
+                                                '${item.taskId}_$displayPercent'),
+                                            style: theme.textTheme.labelMedium
+                                                ?.copyWith(
+                                              color: scheme.onSurfaceVariant,
+                                              fontFeatures: const [
+                                                FontFeature.tabularFigures(),
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
                                 ),
+                              ),
+                              const SizedBox(width: 12),
+                              _DownloadActionsColumn(
+                                controller: controller,
+                                item: item,
+                                canCancel: canCancel,
+                                isCompact: isCompact,
+                                scheme: scheme,
                               ),
                             ],
                           ),
-                          const SizedBox(height: 12),
+                          const SizedBox(height: 16),
                           TweenAnimationBuilder<double>(
                             tween: Tween<double>(
                               begin: 0.0,
@@ -238,7 +204,6 @@ class DownloadPage extends StatelessWidget {
                           ),
                         ],
                       ),
-                      trailing: trailing,
                     ),
                   ),
                 );
@@ -247,44 +212,83 @@ class DownloadPage extends StatelessWidget {
           },
         );
       }),
-      floatingActionButton: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          // Botón para borrar descargas completadas
-          FloatingActionButton(
-            heroTag: 'clearCompleted',
-            onPressed: () async {
-              await controller.clear();
-              if (!context.mounted) return;
-              Get.showSnackbar(AppSnackbar(
-                SnackbarType.success,
-                AppLocalizations.of(context)!.downloadsDownloadsCleared,
-              ));
-            },
-            child: const Icon(Icons.delete_sweep_rounded),
-          ),
-          const SizedBox(height: 12), // espacio entre botones
-
-          // Botón para borrar los keys guardados de folderUri
-          FloatingActionButton(
-            heroTag: 'clearFolderUris',
-            backgroundColor: Colors.redAccent,
-            onPressed: () async {
-              final total = await controller.removeAllDownloadFolderUris();
-              if (!context.mounted) return;
-              Get.showSnackbar(AppSnackbar(
-                SnackbarType.success,
-                AppLocalizations.of(context)!
-                    .downloadsFoldersReferencesRemoved(total),
-              ));
-            },
-            child: const Icon(Icons.folder_off_rounded),
-          ),
-        ],
+      floatingActionButton: FloatingActionButton.extended(
+        heroTag: 'downloadsActionsFab',
+        icon: const Icon(Icons.tune_rounded),
+        label: Text(AppLocalizations.of(context)!.downloadsActionsButton),
+        onPressed: () => _showDownloadsActions(context, controller),
+        backgroundColor: scheme.primary,
+        foregroundColor: scheme.onPrimary,
       ),
       endDrawer: const AppDrawer(),
     );
   }
+}
+
+Future<void> _showDownloadsActions(
+  BuildContext context,
+  DownloadController controller,
+) async {
+  final localizations = AppLocalizations.of(context)!;
+  final scheme = Theme.of(context).colorScheme;
+  final theme = Theme.of(context);
+
+  await showModalBottomSheet<void>(
+    context: context,
+    showDragHandle: true,
+    useSafeArea: true,
+    builder: (sheetContext) {
+      return SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                localizations.downloadsActionsButton,
+                style: theme.textTheme.titleMedium
+                    ?.copyWith(fontWeight: FontWeight.w600),
+              ),
+              const SizedBox(height: 12),
+              _ActionsTile(
+                icon: Icons.delete_sweep_rounded,
+                iconColor: scheme.onErrorContainer,
+                iconBackground: scheme.errorContainer,
+                title: localizations.downloadsDownloadsClearBtn,
+                subtitle: localizations.downloadsClearAllDescription,
+                onTap: () async {
+                  Navigator.of(sheetContext).pop();
+                  await controller.clear();
+                  Get.showSnackbar(AppSnackbar(
+                    SnackbarType.success,
+                    localizations.downloadsDownloadsCleared,
+                  ));
+                },
+              ),
+              const SizedBox(height: 8),
+              _ActionsTile(
+                icon: Icons.link_off_rounded,
+                iconColor: scheme.onTertiaryContainer,
+                iconBackground: scheme.tertiaryContainer,
+                title: localizations.downloadsClearFolderPermissionsTitle,
+                subtitle:
+                    localizations.downloadsClearFolderPermissionsDescription,
+                onTap: () async {
+                  Navigator.of(sheetContext).pop();
+                  final total = await controller.removeAllDownloadFolderUris();
+                  Get.showSnackbar(AppSnackbar(
+                    SnackbarType.success,
+                    localizations.downloadsFoldersReferencesRemoved(total),
+                  ));
+                },
+              ),
+            ],
+          ),
+        ),
+      );
+    },
+  );
 }
 
 Widget _buildThumbnail(List<String> urls, ColorScheme scheme,
@@ -436,4 +440,118 @@ Widget _buildActionButton(
       onPressed: onPressed,
     ),
   );
+}
+
+class _DownloadActionsColumn extends StatelessWidget {
+  const _DownloadActionsColumn({
+    required this.controller,
+    required this.item,
+    required this.canCancel,
+    required this.isCompact,
+    required this.scheme,
+  });
+
+  final DownloadController controller;
+  final DownloadItem item;
+  final bool canCancel;
+  final bool isCompact;
+  final ColorScheme scheme;
+
+  @override
+  Widget build(BuildContext context) {
+    final buttons = <Widget>[
+      if (item.status == TaskStatus.running && item.task.allowPause)
+        _buildActionButton(
+          context,
+          icon: Icons.pause_rounded,
+          tooltip: AppLocalizations.of(context)!.downloadsStatusPaused,
+          color: scheme.primary,
+          compact: isCompact,
+          onPressed: () => controller.pause(item.taskId),
+        )
+      else if (item.status == TaskStatus.paused && item.task.allowPause)
+        _buildActionButton(
+          context,
+          icon: Icons.play_arrow_rounded,
+          tooltip: AppLocalizations.of(context)!.downloadsStatusRunning,
+          color: scheme.primary,
+          compact: isCompact,
+          onPressed: () => controller.resume(item.taskId),
+        ),
+      if (canCancel)
+        _buildActionButton(
+          context,
+          icon: Icons.cancel_rounded,
+          tooltip: AppLocalizations.of(context)!.downloadsStatusCanceled,
+          color: scheme.error,
+          compact: isCompact,
+          onPressed: () => controller.cancel(item.taskId),
+        ),
+    ].whereType<Widget>().toList();
+
+    if (buttons.isEmpty) {
+      return const SizedBox.shrink();
+    }
+
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.end,
+      children: [
+        for (var i = 0; i < buttons.length; i++)
+          Padding(
+            padding: EdgeInsets.only(bottom: i == buttons.length - 1 ? 0 : 8),
+            child: buttons[i],
+          ),
+      ],
+    );
+  }
+}
+
+class _ActionsTile extends StatelessWidget {
+  const _ActionsTile({
+    required this.icon,
+    required this.iconColor,
+    required this.iconBackground,
+    required this.title,
+    this.subtitle,
+    required this.onTap,
+  });
+
+  final IconData icon;
+  final Color iconColor;
+  final Color iconBackground;
+  final String title;
+  final String? subtitle;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final scheme = theme.colorScheme;
+    return ListTile(
+      contentPadding: EdgeInsets.zero,
+      leading: Container(
+        width: 42,
+        height: 42,
+        decoration: BoxDecoration(
+          color: iconBackground,
+          shape: BoxShape.circle,
+        ),
+        child: Icon(icon, color: iconColor),
+      ),
+      title: Text(
+        title,
+        style: theme.textTheme.titleSmall
+            ?.copyWith(fontWeight: FontWeight.w600, color: scheme.onSurface),
+      ),
+      subtitle: subtitle?.isNotEmpty == true
+          ? Text(
+              subtitle!,
+              style: theme.textTheme.bodySmall
+                  ?.copyWith(color: scheme.onSurfaceVariant),
+            )
+          : null,
+      onTap: onTap,
+    );
+  }
 }

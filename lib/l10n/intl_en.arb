@@ -39,6 +39,7 @@
     "ssSaveButton": "Save",
     "downloadsTitle": "Downloads",
     "downloadsNoActiveDownloads": "No active downloads",
+    "downloadsDownloadsClearBtn": "Clear downloads",
     "downloadsDownloadsCleared": "Downloads cleared",
     "downloadsStatusEnqueued": "Enqueued",
     "downloadsStatusRunning": "Downloading",
@@ -53,5 +54,9 @@
     "downloadsSelectFolderRequired": "A folder must be selected",
     "downloadsFoldersReferencesRemoved": "{total} folder reference(s) removed",
     "downloadsFolderSelectionOnceTitle": "Select folder",
-    "downloadsFolderSelectionOnceMsg": "Folder selection is only once per platform"
+    "downloadsFolderSelectionOnceMsg": "Folder selection is only once per platform",
+    "downloadsActionsButton": "More actions",
+    "downloadsClearAllDescription": "Clears the list of completed and canceled downloads.",
+    "downloadsClearFolderPermissionsTitle": "Remove folder permissions",
+    "downloadsClearFolderPermissionsDescription": "Forget the folders previously authorized for downloads."
 }

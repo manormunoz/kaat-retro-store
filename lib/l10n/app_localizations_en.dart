@@ -131,6 +131,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get downloadsNoActiveDownloads => 'No active downloads';
 
   @override
+  String get downloadsDownloadsClearBtn => 'Clear downloads';
+
+  @override
   String get downloadsDownloadsCleared => 'Downloads cleared';
 
   @override
@@ -177,4 +180,19 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get downloadsFolderSelectionOnceMsg =>
       'Folder selection is only once per platform';
+
+  @override
+  String get downloadsActionsButton => 'More actions';
+
+  @override
+  String get downloadsClearAllDescription =>
+      'Clears the list of completed and canceled downloads.';
+
+  @override
+  String get downloadsClearFolderPermissionsTitle =>
+      'Remove folder permissions';
+
+  @override
+  String get downloadsClearFolderPermissionsDescription =>
+      'Forget the folders previously authorized for downloads.';
 }
