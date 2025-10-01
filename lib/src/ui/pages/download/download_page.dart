@@ -529,7 +529,7 @@ class _ActionsTile extends StatelessWidget {
     final theme = Theme.of(context);
     final scheme = theme.colorScheme;
     return ListTile(
-      contentPadding: EdgeInsets.zero,
+      contentPadding: const EdgeInsets.symmetric(horizontal: 12),
       leading: Container(
         width: 42,
         height: 42,
