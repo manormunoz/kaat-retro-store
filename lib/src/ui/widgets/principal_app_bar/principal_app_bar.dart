@@ -13,84 +13,137 @@ PreferredSize principalAppBar(
   Icon? icon,
 }) {
   final downloadController = Get.find<DownloadController>();
+  final theme = Theme.of(context);
+  final scheme = theme.colorScheme;
+  final effectiveTitle = (title == null || title.trim().isEmpty)
+      ? "K'aat Retro Store"
+      : title.trim();
+  final showLogo = logo != null && logo.isNotEmpty;
+  final showIcon = icon != null;
+
+  final canPop = ModalRoute.of(context)?.canPop ?? false;
+
   return PreferredSize(
-    preferredSize: Size(0, AppBar().preferredSize.height + 16),
-    child: Padding(
-      padding: const EdgeInsets.only(bottom: 4.0, top: 10.0),
-      child: AppBar(
-        elevation: clear ? 0 : 0.1,
-        toolbarHeight: 120,
-        title: logo != null || icon != null
-            ? ListTile(
-                leading: logo != null
-                    ? CachedNetworkImage(
-                        imageUrl: logo,
-                        width: 30,
-                        height: 30,
-                        placeholder: (context, url) => SizedBox(
-                          width: 30,
-                          height: 30,
-                          child: CircularProgressIndicator(strokeWidth: 2),
-                        ),
-                        errorWidget: (context, url, error) => Icon(
-                          Icons.broken_image_rounded,
-                          size: 30,
-                          color: Colors.grey,
-                        ),
-                      )
-                    : icon,
-                title: Text(
-                  title == null || title.isEmpty ? 'K\'aat Retro Store' : title,
-                ),
-              )
-            : Text(
-                title == null || title.isEmpty ? 'K\'aat Retro Store' : title,
-                style: Theme.of(context).textTheme.headlineMedium!.copyWith(
-                      color: Theme.of(context).colorScheme.onSurface,
-                      fontWeight: FontWeight.w400,
-                    ),
+    preferredSize: const Size.fromHeight(72),
+    child: AppBar(
+      elevation: clear ? 0 : 1,
+      surfaceTintColor: Colors.transparent,
+      backgroundColor: clear ? Colors.transparent : scheme.surface,
+      centerTitle: false,
+      toolbarHeight: 72,
+      automaticallyImplyLeading: false,
+      leadingWidth: canPop ? 56 : null,
+      leading: canPop ? BackButton(color: scheme.onSurface) : null,
+      titleSpacing: canPop ? 0 : 16,
+      title: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          if (showLogo)
+            Padding(
+              padding: const EdgeInsets.only(right: 12),
+              child: _BrandAvatar(imageUrl: logo, size: 40),
+            )
+          else if (showIcon)
+            Padding(
+              padding: const EdgeInsets.only(right: 12),
+              child: Icon(
+                icon.icon,
+                color: icon.color ?? scheme.primary,
+                size: icon.size ?? 28,
               ),
-        centerTitle: false,
-        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-        foregroundColor: Theme.of(context).hintColor,
-        actions: [
-          Obx(() {
-            final count = downloadController.downloadsInProgress.length;
-            final isHiddenRoute = {
-              RouteNames.download,
-              RouteNames.config,
-              RouteNames.credits,
-            }.contains(Get.currentRoute);
-
-            if (isHiddenRoute) {
-              return const SizedBox.shrink();
-            }
-            return AnimatedDownloadButton(
-              downloadCount: count,
-              onPressed: () => Get.toNamed(RouteNames.download),
-            );
-          }),
-          Builder(
-            builder: (context) {
-              final isHiddenRoute = {
-                RouteNames.download,
-                RouteNames.config,
-                RouteNames.credits,
-              }.contains(Get.currentRoute);
-
-              if (isHiddenRoute) {
-                return const SizedBox.shrink();
-              }
-              return IconButton(
-                onPressed: () {
-                  Scaffold.of(context).openEndDrawer();
-                },
-                icon: Icon(Icons.menu_rounded),
-              );
-            },
+            ),
+          Flexible(
+            child: Text(
+              effectiveTitle,
+              style: theme.textTheme.titleLarge?.copyWith(
+                fontWeight: FontWeight.w600,
+                color: scheme.onSurface,
+              ),
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+            ),
           ),
         ],
       ),
+      actionsIconTheme: IconThemeData(color: scheme.onSurface),
+      actions: [
+        if (!_shouldHideActions())
+          Obx(() {
+            final count = downloadController.downloadsInProgress.length;
+            return Padding(
+              padding: const EdgeInsets.only(right: 4),
+              child: AnimatedDownloadButton(
+                downloadCount: count,
+                onPressed: () => Get.toNamed(RouteNames.download),
+              ),
+            );
+          }),
+        if (!_shouldHideActions())
+          Padding(
+            padding: const EdgeInsets.only(right: 8),
+            child: Builder(
+              builder: (ctx) => IconButton(
+                tooltip: MaterialLocalizations.of(ctx).openAppDrawerTooltip,
+                icon: const Icon(Icons.menu_rounded),
+                onPressed: () => Scaffold.of(ctx).openEndDrawer(),
+              ),
+            ),
+          ),
+      ],
     ),
   );
+}
+
+bool _shouldHideActions() {
+  return {
+    RouteNames.download,
+    RouteNames.config,
+    RouteNames.credits,
+  }.contains(Get.currentRoute);
+}
+
+class _BrandAvatar extends StatelessWidget {
+  const _BrandAvatar({required this.imageUrl, this.size = 48});
+
+  final String imageUrl;
+  final double size;
+
+  @override
+  Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+    return Padding(
+      padding: const EdgeInsets.only(left: 4),
+      child: SizedBox(
+        width: size,
+        height: size,
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(size * 0.22),
+          child: CachedNetworkImage(
+            imageUrl: imageUrl,
+            fit: BoxFit.cover,
+            placeholder: (_, __) => Container(
+              color: scheme.surfaceContainerHighest.withValues(alpha: 0.4),
+              alignment: Alignment.center,
+              child: SizedBox(
+                width: 18,
+                height: 18,
+                child: CircularProgressIndicator(
+                  strokeWidth: 2,
+                  valueColor: AlwaysStoppedAnimation(scheme.primary),
+                ),
+              ),
+            ),
+            errorWidget: (_, __, ___) => Container(
+              color: scheme.surfaceContainerHighest.withValues(alpha: 0.4),
+              alignment: Alignment.center,
+              child: Icon(
+                Icons.broken_image_rounded,
+                color: scheme.onSurfaceVariant,
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
 }
