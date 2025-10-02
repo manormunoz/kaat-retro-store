@@ -89,6 +89,15 @@ wii:
   roms_logos: "https://cdn.jsdelivr.net/gh/libretro-thumbnails/Nintendo_-_Wii@master/Named_Logos/"
   ssSystemId: 16
 
+wiiu:
+  platform_name: "Wii U (Digital) (CDN)"
+  platform_abbr: "wiiu"
+  platform_logo: "https://cdn.jsdelivr.net/gh/libretro/retroarch-assets@master/xmb/flatux/png/Nintendo%20-%20Wii%20U.png"
+  url: "https://myrient.erista.me/files/No-Intro/Nintendo%20-%20Wii%20U%20%28Digital%29%20%28CDN%29/"
+  roms_boxarts: "https://cdn.jsdelivr.net/gh/libretro-thumbnails/Nintendo_-_Wii_U@master/Named_Boxarts/"
+  roms_logos: "https://cdn.jsdelivr.net/gh/libretro-thumbnails/Nintendo_-_Wii_U@master/Named_Logos/"
+  ssSystemId: 18
+
 # --- SEGA ---
 mastersystem:
   platform_name: "Sega Master System - Mark III"
@@ -172,11 +181,20 @@ psp:
   roms_logos: "https://cdn.jsdelivr.net/gh/libretro-thumbnails/Sony_-_PlayStation_Portable@master/Named_Logos/"
   ssSystemId: 61
 
-psvita:
-  platform_name: "PlayStation Vita"
+psvitaNoNpDrm:
+  platform_name: "PlayStation Vita (NoNpDrm)"
   platform_abbr: "psvita"
   platform_logo: "https://cdn.jsdelivr.net/gh/libretro/retroarch-assets@master/xmb/flatux/png/Sony%20-%20PlayStation%20Vita.png"
-  url: "https://myrient.erista.me/files/No-Intro/Sony%20-%20PlayStation%20Vita%20(Decrypted)/"
+  url: "https://myrient.erista.me/files/No-Intro/Unofficial%20-%20Sony%20-%20PlayStation%20Vita%20%28NoNpDrm%29/"
+  roms_boxarts: "https://cdn.jsdelivr.net/gh/libretro-thumbnails/Sony_-_PlayStation_Vita@master/Named_Boxarts/"
+  roms_logos: "https://cdn.jsdelivr.net/gh/libretro-thumbnails/Sony_-_PlayStation_Vita@master/Named_Logos/"
+  ssSystemId: 62
+
+psvitaVPK:
+  platform_name: "PlayStation Vita (VPK)"
+  platform_abbr: "psvita"
+  platform_logo: "https://cdn.jsdelivr.net/gh/libretro/retroarch-assets@master/xmb/flatux/png/Sony%20-%20PlayStation%20Vita.png"
+  url: "https://myrient.erista.me/files/No-Intro/Unofficial%20-%20Sony%20-%20PlayStation%20Vita%20%28VPK%29/"
   roms_boxarts: "https://cdn.jsdelivr.net/gh/libretro-thumbnails/Sony_-_PlayStation_Vita@master/Named_Boxarts/"
   roms_logos: "https://cdn.jsdelivr.net/gh/libretro-thumbnails/Sony_-_PlayStation_Vita@master/Named_Logos/"
   ssSystemId: 62
@@ -227,3 +245,31 @@ mame:
   roms_boxarts: "https://cdn.jsdelivr.net/gh/libretro-thumbnails/MAME@master/Named_Boxarts/"
   roms_logos: "https://cdn.jsdelivr.net/gh/libretro-thumbnails/MAME@master/Named_Logos/"
   ssSystemId: 75
+
+# --- ATARI ---
+atari2600:
+  platform_name: "Atari 2600"
+  platform_abbr: "atari2600"
+  platform_logo: "https://cdn.jsdelivr.net/gh/libretro/retroarch-assets@master/xmb/flatux/png/Atari%20-%202600.png"
+  url: "https://myrient.erista.me/files/No-Intro/Atari%20-%20Atari%202600/"
+  roms_boxarts: "https://cdn.jsdelivr.net/gh/libretro-thumbnails/Atari_-_2600@master/Named_Boxarts/"
+  roms_logos: "https://cdn.jsdelivr.net/gh/libretro-thumbnails/Atari_-_2600@master/Named_Logos/"
+  ssSystemId: 26
+
+atari5200:
+  platform_name: "Atari 5200"
+  platform_abbr: "atari5200"
+  platform_logo: "https://cdn.jsdelivr.net/gh/libretro/retroarch-assets@master/xmb/flatux/png/Atari%20-%205200.png"
+  url: "https://myrient.erista.me/files/No-Intro/Atari%20-%20Atari%205200/"
+  roms_boxarts: "https://cdn.jsdelivr.net/gh/libretro-thumbnails/Atari_-_5200@master/Named_Boxarts/"
+  roms_logos: "https://cdn.jsdelivr.net/gh/libretro-thumbnails/Atari_-_5200@master/Named_Logos/"
+  ssSystemId: 40
+
+atari7800:
+  platform_name: "Atari 7800 (BIN)"
+  platform_abbr: "atari7800"
+  platform_logo: "https://cdn.jsdelivr.net/gh/libretro/retroarch-assets@master/xmb/flatux/png/Atari%20-%207800.png"
+  url: "https://myrient.erista.me/files/No-Intro/Atari%20-%20Atari%207800%20%28BIN%29/"
+  roms_boxarts: "https://cdn.jsdelivr.net/gh/libretro-thumbnails/Atari_-_7800@master/Named_Boxarts/"
+  roms_logos: "https://cdn.jsdelivr.net/gh/libretro-thumbnails/Atari_-_7800@master/Named_Logos/"
+  ssSystemId: 41
