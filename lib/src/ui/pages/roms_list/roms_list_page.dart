@@ -24,18 +24,25 @@ class RomsListPage extends GetView<RomsListController> {
       endDrawer: const AppDrawer(),
       body: SafeArea(
         child: Obx(
-          () => AnimatedSwitcher(
-            duration: const Duration(milliseconds: 250),
-            switchInCurve: Curves.easeOut,
-            switchOutCurve: Curves.easeIn,
-            child: controller.loading.value
-                ? const _RomsLoadingView(key: ValueKey('roms-loading'))
-                : _RomsListContent(
-                    key: const ValueKey('roms-content'),
-                    controller: controller,
-                    downloadController: downloadController,
-                  ),
-          ),
+          () {
+            final isLoading = controller.loading.value;
+            final romsSnapshot = controller.roms.toList(growable: false);
+            final hasSearchText = controller.searchText.value.isNotEmpty;
+            return AnimatedSwitcher(
+              duration: const Duration(milliseconds: 250),
+              switchInCurve: Curves.easeOut,
+              switchOutCurve: Curves.easeIn,
+              child: isLoading
+                  ? const _RomsLoadingView(key: ValueKey('roms-loading'))
+                  : _RomsListContent(
+                      key: const ValueKey('roms-content'),
+                      controller: controller,
+                      downloadController: downloadController,
+                      roms: romsSnapshot,
+                      hasSearchText: hasSearchText,
+                    ),
+            );
+          },
         ),
       ),
     );
@@ -56,14 +63,17 @@ class _RomsListContent extends StatelessWidget {
     super.key,
     required this.controller,
     required this.downloadController,
+    required this.roms,
+    required this.hasSearchText,
   });
 
   final RomsListController controller;
   final DownloadController downloadController;
+  final List<Map<String, dynamic>> roms;
+  final bool hasSearchText;
 
   @override
   Widget build(BuildContext context) {
-    final roms = controller.roms;
     final width = MediaQuery.sizeOf(context).width;
     final localizations = AppLocalizations.of(context)!;
     final materialLocalizations = MaterialLocalizations.of(context);
@@ -93,7 +103,7 @@ class _RomsListContent extends StatelessWidget {
         delegate: _RomsSearchHeaderDelegate(
           horizontalPadding: horizontalPadding,
           controller: controller.searchCtrl,
-          hasText: controller.searchText.value.isNotEmpty,
+          hasText: hasSearchText,
           hintText: localizations.searchoRoms,
           clearTooltip: materialLocalizations.deleteButtonTooltip,
           onChanged: controller.onSearchChanged,
@@ -579,8 +589,8 @@ class _RomListTile extends StatelessWidget {
           );
         }
 
-        final heroHeight = ((thumbnailSize ?? 88) * (isGrid ? 1.1 : 1.5))
-            .clamp(132.0, 252.0);
+        final heroHeight =
+            ((thumbnailSize ?? 88) * (isGrid ? 1.1 : 1.5)).clamp(132.0, 252.0);
 
         return Column(
           mainAxisSize: MainAxisSize.min,
