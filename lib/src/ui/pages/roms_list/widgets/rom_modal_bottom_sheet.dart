@@ -241,7 +241,7 @@ class _RomHeader extends StatelessWidget {
                       visualDensity: VisualDensity.compact,
                       side: BorderSide.none,
                       backgroundColor:
-                          scheme.surfaceContainerHigh.withValues(alpha: 0.6),
+                          scheme.surfaceVariant.withValues(alpha: 0.6),
                       labelStyle: theme.textTheme.labelMedium?.copyWith(
                         color: scheme.onSurfaceVariant,
                       ),

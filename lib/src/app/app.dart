@@ -15,7 +15,7 @@ class App extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final themeCtrl = Get.find<ThemeController>();
-    final theme = AppTheme(palette: BrandPalette.evergreen);
+    final theme = AppTheme(palette: BrandPalette.matcha);
     final lang = Get.find<LanguageController>();
     return Obx(
       () => GetMaterialApp(
