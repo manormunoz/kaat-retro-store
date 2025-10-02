@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class BrandPalette {
@@ -73,6 +74,11 @@ class AppTheme {
         foregroundColor: scheme.onSurface,
         centerTitle: false,
         surfaceTintColor: Colors.transparent,
+        systemOverlayStyle: const SystemUiOverlayStyle(
+          statusBarColor: Colors.transparent,
+          statusBarIconBrightness: Brightness.dark,
+          statusBarBrightness: Brightness.light,
+        ),
       ),
       // Cards y contenedores suaves
       cardTheme: CardThemeData(
@@ -191,6 +197,11 @@ class AppTheme {
         foregroundColor: scheme.onSurface,
         centerTitle: false,
         surfaceTintColor: Colors.transparent,
+        systemOverlayStyle: const SystemUiOverlayStyle(
+          statusBarColor: Colors.transparent,
+          statusBarIconBrightness: Brightness.light,
+          statusBarBrightness: Brightness.dark,
+        ),
       ),
       cardTheme: CardThemeData(
         color: scheme.surfaceContainerHigh,
