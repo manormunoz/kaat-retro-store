@@ -267,10 +267,10 @@ class _RomsLayout {
   }
 
   static double gridChildAspectRatio(double width) {
-    if (width >= 1400) return 0.9;
-    if (width >= 1080) return 0.86;
-    if (width >= 760) return 0.82;
-    return 0.78;
+    if (width >= 1400) return 2.2;
+    if (width >= 1080) return 2.0;
+    if (width >= 760) return 1.8;
+    return 1.6;
   }
 }
 
@@ -515,10 +515,14 @@ class _RomListTile extends StatelessWidget {
     );
   }
 
-  Widget _buildListLayout(BuildContext context, double imageSize) {
+  Widget _buildListLayout(BuildContext context, double imageSize,
+      {bool isGridLayout = false}) {
     final theme = Theme.of(context);
     final scheme = theme.colorScheme;
-    final effectiveSize = imageSize.clamp(56.0, 96.0);
+    final downloadTooltip =
+        AppLocalizations.of(context)!.downloadsActionDownload;
+    final maxImageSize = isGridLayout ? 140.0 : 112.0;
+    final effectiveSize = imageSize.clamp(64.0, maxImageSize).toDouble();
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -527,6 +531,7 @@ class _RomListTile extends StatelessWidget {
           width: effectiveSize,
           height: effectiveSize,
           radius: 12,
+          fit: BoxFit.contain,
         ),
         const SizedBox(width: 12),
         Expanded(
@@ -557,9 +562,13 @@ class _RomListTile extends StatelessWidget {
           ),
         ),
         const SizedBox(width: 4),
-        IconButton(
-          tooltip: AppLocalizations.of(context)!.downloadsActionDownload,
-          icon: const Icon(Icons.download_rounded),
+        IconButton.filledTonal(
+          tooltip: downloadTooltip,
+          style: IconButton.styleFrom(
+            padding: const EdgeInsets.all(8),
+            minimumSize: const Size(44, 44),
+          ),
+          icon: const Icon(Icons.download_rounded, size: 20),
           onPressed: onDownload,
         ),
       ],
@@ -567,63 +576,16 @@ class _RomListTile extends StatelessWidget {
   }
 
   Widget _buildGridLayout(BuildContext context) {
-    final theme = Theme.of(context);
-    final scheme = theme.colorScheme;
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Stack(
-          children: [
-            AspectRatio(
-              aspectRatio: 16 / 10,
-              child: FallbackNetworkImage(
-                urls: [boxart, logo],
-                width: double.infinity,
-                height: double.infinity,
-                radius: 12,
-              ),
-            ),
-            Positioned(
-              top: 8,
-              right: 8,
-              child: IconButton.filledTonal(
-                tooltip: AppLocalizations.of(context)!.downloadsActionDownload,
-                style: IconButton.styleFrom(
-                  padding: const EdgeInsets.all(8),
-                  minimumSize: const Size(40, 40),
-                ),
-                icon: const Icon(Icons.download_rounded, size: 20),
-                onPressed: onDownload,
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 8),
-        Text(
-          name,
-          maxLines: 2,
-          overflow: TextOverflow.ellipsis,
-          style: theme.textTheme.titleMedium?.copyWith(
-            fontWeight: FontWeight.w600,
-            fontSize: (theme.textTheme.titleMedium?.fontSize ?? 16) - 1,
-          ),
-        ),
-        const SizedBox(height: 3),
-        if (romName.isNotEmpty)
-          Text(
-            romName,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            style: theme.textTheme.bodySmall
-                ?.copyWith(color: scheme.onSurfaceVariant),
-          ),
-        if (sizeLabel.isNotEmpty)
-          Text(
-            sizeLabel,
-            style: theme.textTheme.bodySmall
-                ?.copyWith(color: scheme.onSurfaceVariant),
-          ),
-      ],
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final targetImageSize =
+            (constraints.maxWidth * 0.45).clamp(80.0, 144.0).toDouble();
+        return _buildListLayout(
+          context,
+          targetImageSize,
+          isGridLayout: true,
+        );
+      },
     );
   }
 }

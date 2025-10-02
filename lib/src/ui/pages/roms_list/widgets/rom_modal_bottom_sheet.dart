@@ -1,5 +1,3 @@
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
@@ -195,7 +193,8 @@ class _RomHeader extends StatelessWidget {
         developer != 'Unknown') {
       metadata.add(developer!.trim());
     }
-    final infoText = metadata.isEmpty ? l10n.romNoMetadata : metadata.join(' • ');
+    final infoText =
+        metadata.isEmpty ? l10n.romNoMetadata : metadata.join(' • ');
     final showSize = size.trim().isNotEmpty;
 
     return Row(
@@ -280,9 +279,8 @@ class _RomActionsRow extends StatelessWidget {
             ? constraints.maxWidth
             : MediaQuery.sizeOf(context).width;
         final isCompact = maxWidth < 560;
-        final buttonWidth = isCompact
-            ? maxWidth
-            : (maxWidth - (spacing * 2)) / 3;
+        final buttonWidth =
+            isCompact ? maxWidth : (maxWidth - (spacing * 2)) / 3;
 
         Widget button(Widget child) =>
             SizedBox(width: buttonWidth, child: child);
