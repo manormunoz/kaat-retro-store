@@ -198,6 +198,7 @@ class _RomsListContent extends StatelessWidget {
       sizeLabel: size,
       boxart: boxart,
       logo: logo,
+      platformAbbr: platformAbbr,
       isGrid: isGrid,
       thumbnailSize: isGrid ? null : listThumbnailSize,
       onTap: () {
@@ -267,10 +268,10 @@ class _RomsLayout {
   }
 
   static double gridChildAspectRatio(double width) {
-    if (width >= 1400) return 2.2;
-    if (width >= 1080) return 2.0;
-    if (width >= 760) return 1.8;
-    return 1.6;
+    if (width >= 1400) return 1.45;
+    if (width >= 1080) return 1.35;
+    if (width >= 760) return 1.25;
+    return 1.18;
   }
 }
 
@@ -476,6 +477,7 @@ class _RomListTile extends StatelessWidget {
     required this.sizeLabel,
     required this.boxart,
     required this.logo,
+    required this.platformAbbr,
     required this.isGrid,
     required this.onTap,
     required this.onDownload,
@@ -487,6 +489,7 @@ class _RomListTile extends StatelessWidget {
   final String sizeLabel;
   final String boxart;
   final String logo;
+  final String platformAbbr;
   final bool isGrid;
   final double? thumbnailSize;
   final VoidCallback onTap;
@@ -497,95 +500,304 @@ class _RomListTile extends StatelessWidget {
     final theme = Theme.of(context);
     final scheme = theme.colorScheme;
     return Card(
-      elevation: 0,
+      elevation: isGrid ? 2.5 : 1.5,
+      shadowColor: scheme.shadow.withValues(alpha: 0.16),
       clipBehavior: Clip.antiAlias,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-        side: BorderSide(color: scheme.outlineVariant.withValues(alpha: 0.18)),
+        borderRadius: BorderRadius.circular(18),
+        side: BorderSide(color: scheme.outlineVariant.withValues(alpha: 0.14)),
       ),
       child: InkWell(
         onTap: onTap,
-        child: Padding(
-          padding: EdgeInsets.all(isGrid ? 10 : 12),
-          child: isGrid
-              ? _buildGridLayout(context)
-              : _buildListLayout(context, thumbnailSize ?? 62),
+        splashFactory: Theme.of(context).splashFactory,
+        overlayColor: WidgetStateProperty.resolveWith<Color?>(
+          (states) {
+            if (states.contains(WidgetState.pressed) ||
+                states.contains(WidgetState.hovered) ||
+                states.contains(WidgetState.focused)) {
+              return scheme.primary.withValues(alpha: 0.08);
+            }
+            return null;
+          },
+        ),
+        child: Ink(
+          decoration: BoxDecoration(
+            color: scheme.surfaceContainerLowest,
+          ),
+          child: _buildContent(context),
         ),
       ),
     );
   }
 
-  Widget _buildListLayout(BuildContext context, double imageSize,
-      {bool isGridLayout = false}) {
+  Widget _buildContent(BuildContext context) {
     final theme = Theme.of(context);
     final scheme = theme.colorScheme;
     final downloadTooltip =
         AppLocalizations.of(context)!.downloadsActionDownload;
-    final maxImageSize = isGridLayout ? 140.0 : 112.0;
-    final effectiveSize = imageSize.clamp(64.0, maxImageSize).toDouble();
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        FallbackNetworkImage(
-          urls: [boxart, logo],
-          width: effectiveSize,
-          height: effectiveSize,
-          radius: 12,
-          fit: BoxFit.contain,
-        ),
-        const SizedBox(width: 12),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                name,
-                style: theme.textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.w600,
-                    fontSize:
-                        (theme.textTheme.titleMedium?.fontSize ?? 16) - 1),
+
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final boundedHeight =
+            constraints.hasBoundedHeight && constraints.maxHeight.isFinite;
+        final metadataPadding = EdgeInsets.fromLTRB(
+          16,
+          isGrid ? 10 : 14,
+          16,
+          isGrid ? 12 : 18,
+        );
+
+        if (boundedHeight) {
+          final heroHeight = constraints.maxHeight * (isGrid ? 0.54 : 0.5);
+          final metadataScrollPhysics =
+              constraints.maxHeight < (isGrid ? 236 : 210)
+                  ? const BouncingScrollPhysics(
+                      parent: AlwaysScrollableScrollPhysics(),
+                    )
+                  : const NeverScrollableScrollPhysics();
+          return SizedBox(
+            height: constraints.maxHeight,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                SizedBox(
+                  height: heroHeight,
+                  child: _buildArtworkHeader(
+                    scheme: scheme,
+                    tooltip: downloadTooltip,
+                  ),
+                ),
+                Expanded(
+                  child: SingleChildScrollView(
+                    physics: metadataScrollPhysics,
+                    padding: metadataPadding,
+                    child: _buildMetadata(theme, scheme),
+                  ),
+                ),
+              ],
+            ),
+          );
+        }
+
+        final heroHeight = ((thumbnailSize ?? 88) * (isGrid ? 1.1 : 1.5))
+            .clamp(132.0, 252.0);
+
+        return Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            SizedBox(
+              height: heroHeight,
+              child: _buildArtworkHeader(
+                scheme: scheme,
+                tooltip: downloadTooltip,
               ),
-              const SizedBox(height: 4),
-              if (romName.isNotEmpty)
-                Text(
-                  romName,
-                  style: theme.textTheme.bodySmall
-                      ?.copyWith(color: scheme.onSurfaceVariant),
-                ),
-              if (sizeLabel.isNotEmpty)
-                Text(
-                  sizeLabel,
-                  style: theme.textTheme.bodySmall
-                      ?.copyWith(color: scheme.onSurfaceVariant),
-                ),
-            ],
-          ),
-        ),
-        const SizedBox(width: 4),
-        IconButton.filledTonal(
-          tooltip: downloadTooltip,
-          style: IconButton.styleFrom(
-            padding: const EdgeInsets.all(8),
-            minimumSize: const Size(44, 44),
-          ),
-          icon: const Icon(Icons.download_rounded, size: 20),
-          onPressed: onDownload,
-        ),
-      ],
+            ),
+            Padding(
+              padding: metadataPadding,
+              child: _buildMetadata(theme, scheme),
+            ),
+          ],
+        );
+      },
     );
   }
 
-  Widget _buildGridLayout(BuildContext context) {
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        final targetImageSize =
-            (constraints.maxWidth * 0.45).clamp(80.0, 144.0).toDouble();
-        return _buildListLayout(
-          context,
-          targetImageSize,
-          isGridLayout: true,
-        );
-      },
+  Widget _buildArtworkHeader({
+    required ColorScheme scheme,
+    required String tooltip,
+  }) {
+    final fallback = Center(
+      child: Icon(
+        Icons.image_not_supported_rounded,
+        size: 34,
+        color: scheme.onSurfaceVariant.withValues(alpha: 0.5),
+      ),
+    );
+
+    return ClipRRect(
+      borderRadius: const BorderRadius.vertical(top: Radius.circular(18)),
+      child: Stack(
+        fit: StackFit.expand,
+        children: [
+          DecoratedBox(
+            decoration: BoxDecoration(
+              color: scheme.surfaceContainerHigh.withValues(alpha: 0.65),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(18, 18, 18, 14),
+            child: DecoratedBox(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(16),
+                color: scheme.surface.withValues(alpha: 0.12),
+              ),
+              child: LayoutBuilder(
+                builder: (context, innerConstraints) {
+                  final width = innerConstraints.maxWidth.isFinite
+                      ? innerConstraints.maxWidth
+                      : null;
+                  final height = innerConstraints.maxHeight.isFinite
+                      ? innerConstraints.maxHeight
+                      : null;
+                  return FallbackNetworkImage(
+                    urls: [boxart, logo],
+                    width: width,
+                    height: height,
+                    fit: BoxFit.contain,
+                    placeholder: const SizedBox.shrink(),
+                    fallback: fallback,
+                  );
+                },
+              ),
+            ),
+          ),
+          Positioned(
+            top: 14,
+            right: 14,
+            child: _DownloadBadge(
+              tooltip: tooltip,
+              scheme: scheme,
+              onPressed: onDownload,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildMetadata(ThemeData theme, ColorScheme scheme) {
+    final subtitleStyle =
+        theme.textTheme.bodySmall?.copyWith(color: scheme.onSurfaceVariant);
+    final chips = <Widget>[];
+    if (sizeLabel.trim().isNotEmpty) {
+      chips.add(_MetadataChip(
+        label: sizeLabel.trim(),
+        scheme: scheme,
+        theme: theme,
+      ));
+    }
+    if (platformAbbr.trim().isNotEmpty) {
+      chips.add(_MetadataChip(
+        label: platformAbbr.trim().toUpperCase(),
+        scheme: scheme,
+        theme: theme,
+      ));
+    }
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          name,
+          maxLines: 2,
+          overflow: TextOverflow.ellipsis,
+          style: theme.textTheme.titleMedium?.copyWith(
+            fontWeight: FontWeight.w600,
+            height: 1.2,
+          ),
+        ),
+        if (romName.trim().isNotEmpty) ...[
+          const SizedBox(height: 8),
+          Text(
+            romName.trim(),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: subtitleStyle,
+          ),
+        ],
+        if (chips.isNotEmpty) ...[
+          const SizedBox(height: 10),
+          Wrap(
+            spacing: 8,
+            runSpacing: 6,
+            children: chips,
+          ),
+        ],
+      ],
+    );
+  }
+}
+
+class _MetadataChip extends StatelessWidget {
+  const _MetadataChip({
+    required this.label,
+    required this.scheme,
+    required this.theme,
+  });
+
+  final String label;
+  final ColorScheme scheme;
+  final ThemeData theme;
+
+  @override
+  Widget build(BuildContext context) {
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        color: scheme.surfaceContainerHighest.withValues(alpha: 0.7),
+        borderRadius: BorderRadius.circular(999),
+        border: Border.all(
+          color: scheme.outlineVariant.withValues(alpha: 0.16),
+          width: 0.8,
+        ),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+        child: Text(
+          label,
+          style: theme.textTheme.labelSmall?.copyWith(
+            color: scheme.onSurfaceVariant,
+            letterSpacing: 0.3,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _DownloadBadge extends StatelessWidget {
+  const _DownloadBadge({
+    required this.tooltip,
+    required this.scheme,
+    required this.onPressed,
+  });
+
+  final String tooltip;
+  final ColorScheme scheme;
+  final VoidCallback onPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    return Tooltip(
+      message: tooltip,
+      preferBelow: false,
+      child: DecoratedBox(
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          boxShadow: [
+            BoxShadow(
+              color: scheme.shadow.withValues(alpha: 0.2),
+              blurRadius: 14,
+              offset: const Offset(0, 8),
+            ),
+          ],
+        ),
+        child: IconButton(
+          onPressed: onPressed,
+          style: IconButton.styleFrom(
+            minimumSize: const Size.square(44),
+            padding: const EdgeInsets.all(10),
+            shape: const CircleBorder(),
+            backgroundColor: scheme.surfaceContainerHigh.withValues(alpha: 0.9),
+            shadowColor: Colors.transparent,
+          ),
+          icon: Icon(
+            Icons.download_rounded,
+            color: scheme.primary,
+            size: 22,
+          ),
+        ),
+      ),
     );
   }
 }
