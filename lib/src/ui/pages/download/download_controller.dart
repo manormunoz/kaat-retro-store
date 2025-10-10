@@ -6,6 +6,7 @@ import 'package:get/get.dart';
 import 'package:background_downloader/background_downloader.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:path/path.dart' as p;
 import 'package:kaat/l10n/app_localizations.dart';
 import 'package:kaat/src/ui/widgets/app_snackbar/app_snackbar.dart';
 
@@ -18,7 +19,7 @@ class DownloadItem {
     List<String>? imageUrls,
   }) : imageUrls = List.unmodifiable(imageUrls ?? const []);
 
-  final UriDownloadTask task; // guardamos el DownloadTask
+  final DownloadTask task; // guardamos el DownloadTask (Uri or plain)
   double progress; // 0..1
   TaskStatus status;
   String subdir;
@@ -373,17 +374,30 @@ class DownloadController extends GetxController {
 
     final encodedMeta = _encodeMetaData(subdir, normalizedImages);
 
-    final task = UriDownloadTask(
-      url: url,
-      directoryUri: destUri,
-      filename: filenameSfe,
-      displayName: filenameSfe,
-      metaData: encodedMeta,
-      updates: Updates.statusAndProgress,
-      requiresWiFi: requiresWifi,
-      allowPause: false,
-      retries: 2,
-    );
+    final DownloadTask task = Platform.isWindows
+        ? DownloadTask(
+            url: url,
+            directory: destUri.toFilePath(windows: true),
+            baseDirectory: BaseDirectory.root,
+            filename: filenameSfe,
+            displayName: filenameSfe,
+            metaData: encodedMeta,
+            updates: Updates.statusAndProgress,
+            requiresWiFi: requiresWifi,
+            allowPause: false,
+            retries: 2,
+          )
+        : UriDownloadTask(
+            url: url,
+            directoryUri: destUri,
+            filename: filenameSfe,
+            displayName: filenameSfe,
+            metaData: encodedMeta,
+            updates: Updates.statusAndProgress,
+            requiresWiFi: requiresWifi,
+            allowPause: false,
+            retries: 2,
+          );
 
     downloads[task.taskId] = DownloadItem(
       task: task,
@@ -462,7 +476,7 @@ class DownloadController extends GetxController {
 
   Future<bool> _upsertFromRecord(TaskRecord record) async {
     final task = record.task;
-    if (task is! UriDownloadTask) {
+    if (task is! DownloadTask) {
       return false;
     }
 
