@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:sqflite/sqflite.dart';
+import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'package:path/path.dart';
 import 'package:yaml/yaml.dart';
 
@@ -10,10 +11,31 @@ class DbService {
   static final DbService _instance = DbService._internal();
   factory DbService() => _instance;
   static Database? _db;
+  static bool _ffiInitialized = false;
+  late final DatabaseFactory _databaseFactory;
   bool _isReady = false;
   bool get isReady => _isReady;
 
-  DbService._internal();
+  DbService._internal() {
+    _databaseFactory = _resolveDatabaseFactory();
+  }
+
+  DatabaseFactory _resolveDatabaseFactory() {
+    if (_shouldUseFfi()) {
+      if (!_ffiInitialized) {
+        sqfliteFfiInit();
+        _ffiInitialized = true;
+      }
+      return databaseFactoryFfi;
+    }
+    return databaseFactory;
+  }
+
+  bool _shouldUseFfi() {
+    if (kIsWeb) return false;
+    return defaultTargetPlatform == TargetPlatform.linux ||
+        defaultTargetPlatform == TargetPlatform.windows;
+  }
 
   Future<Database> get database async {
     if (_db != null) return _db!;
@@ -22,9 +44,12 @@ class DbService {
   }
 
   Future<Database> initDb() async {
-    final dbPath = await getDatabasesPath();
+    final dbPath = await _databaseFactory.getDatabasesPath();
     final path = join(dbPath, 'kaat_db.db');
-    final db = await openDatabase(path, version: 1, onCreate: _onCreate);
+    final db = await _databaseFactory.openDatabase(
+      path,
+      options: OpenDatabaseOptions(version: 1, onCreate: _onCreate),
+    );
     // await dropTables(db);
     // await _onCreate(db, 1);
     // debugListTables(db);

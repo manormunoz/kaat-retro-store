@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:background_downloader/background_downloader.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:kaat/l10n/app_localizations.dart';
 import 'package:kaat/src/ui/widgets/app_snackbar/app_snackbar.dart';
@@ -568,10 +569,27 @@ class DownloadController extends GetxController {
       return cached;
     }
 
-    // Abre el picker de directorio (Android → SAF, iOS → UIDocumentPicker)
-    final Uri? folderUri = await FileDownloader().uri.pickDirectory(
-          persistedUriPermission: true,
-        );
+    Uri? folderUri;
+    try {
+      // Abre el picker de directorio (Android → SAF, iOS → UIDocumentPicker)
+      folderUri = await FileDownloader().uri.pickDirectory(
+            persistedUriPermission: true,
+          );
+    } on UnimplementedError {
+      folderUri = await _pickDirectoryWithFilePicker();
+    } catch (error) {
+      if (error is AssertionError &&
+          error
+              .toString()
+              .contains('pickDirectory not implemented for this platform')) {
+        folderUri = await _pickDirectoryWithFilePicker();
+      } else {
+        rethrow;
+      }
+    }
+
+    // pickDirectory might resolve but return null on cancel, so try fallback as last resort
+    folderUri ??= await _pickDirectoryWithFilePicker();
 
     if (folderUri != null) {
       debugPrint('Carpeta elegida: $folderUri');
@@ -579,6 +597,23 @@ class DownloadController extends GetxController {
       return folderUri;
     } else {
       debugPrint('Usuario canceló selección de carpeta');
+      return null;
+    }
+  }
+
+  Future<Uri?> _pickDirectoryWithFilePicker() async {
+    try {
+      final path = await FilePicker.platform.getDirectoryPath();
+      if (path == null) {
+        return null;
+      }
+      return Uri.file(
+        path,
+        windows: Platform.isWindows,
+      );
+    } catch (error, stackTrace) {
+      debugPrint('Error al usar FilePicker para seleccionar carpeta: $error');
+      debugPrint(stackTrace.toString());
       return null;
     }
   }
