@@ -125,18 +125,61 @@ jobs:
       - name: Build Linux
         run: flutter build linux --release
 
-      - name: Create tarball
+      - name: Install AppImage dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libfuse2
+
+      - name: Download appimagetool
+        run: |
+          wget https://github.com/AppImage/AppImageKit/releases/download/continuous/appimagetool-x86_64.AppImage
+          chmod +x appimagetool-x86_64.AppImage
+
+      - name: Create AppImage structure
+        run: |
+          mkdir -p AppDir/usr/bin
+          mkdir -p AppDir/usr/lib
+          cp -r build/linux/x64/release/bundle/* AppDir/usr/bin/
+
+          # Create desktop file
+          cat > AppDir/kaat.desktop << EOF
+          [Desktop Entry]
+          Name=K'aat Retro Store
+          Exec=kaat
+          Icon=kaat
+          Type=Application
+          Categories=Game;Utility;
+          EOF
+
+          # Create AppRun script
+          cat > AppDir/AppRun << 'EOF'
+          #!/bin/bash
+          SELF=$(readlink -f "$0")
+          HERE=${SELF%/*}
+          export PATH="${HERE}/usr/bin:${PATH}"
+          export LD_LIBRARY_PATH="${HERE}/usr/lib:${LD_LIBRARY_PATH}"
+          exec "${HERE}/usr/bin/kaat" "$@"
+          EOF
+          chmod +x AppDir/AppRun
+
+      - name: Build AppImage
+        run: |
+          ./appimagetool-x86_64.AppImage AppDir kaat-${{ steps.version.outputs.version }}-x86_64.AppImage
+
+      - name: Create tarball (portable)
         run: |
           cd build/linux/x64/release/bundle
           tar -czf ../kaat-${{ steps.version.outputs.version }}-linux-x64.tar.gz *
           cd ../
           mv kaat-${{ steps.version.outputs.version }}-linux-x64.tar.gz ../../../../
 
-      - name: Upload Linux artifact
+      - name: Upload Linux artifacts
         uses: actions/upload-artifact@v4
         with:
           name: linux-x64
-          path: kaat-*-linux-x64.tar.gz
+          path: |
+            kaat-*-x86_64.AppImage
+            kaat-*-linux-x64.tar.gz
 
   build-windows:
     name: Build Windows x64
@@ -177,17 +220,53 @@ jobs:
       - name: Build Windows
         run: flutter build windows --release
 
-      - name: Create ZIP
+      - name: Create Inno Setup script
+        run: |
+          $version = "${{ steps.version.outputs.version }}"
+          @"
+          [Setup]
+          AppName=K'aat Retro Store
+          AppVersion=$version
+          DefaultDirName={autopf}\Kaat
+          DefaultGroupName=K'aat Retro Store
+          OutputDir=.
+          OutputBaseFilename=kaat-$version-windows-x64-setup
+          Compression=lzma2
+          SolidCompression=yes
+          ArchitecturesInstallIn64BitMode=x64
+          PrivilegesRequired=admin
+
+          [Files]
+          Source: "build\windows\x64\runner\Release\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs
+
+          [Icons]
+          Name: "{group}\K'aat Retro Store"; Filename: "{app}\kaat.exe"
+          Name: "{autodesktop}\K'aat Retro Store"; Filename: "{app}\kaat.exe"
+
+          [Run]
+          Filename: "{app}\kaat.exe"; Description: "Launch K'aat Retro Store"; Flags: nowait postinstall skipifsilent
+          "@ | Out-File -FilePath installer.iss -Encoding ASCII
+
+      - name: Install Inno Setup
+        run: choco install innosetup -y
+
+      - name: Build Installer
+        run: |
+          & "C:\Program Files (x86)\Inno Setup 6\ISCC.exe" installer.iss
+
+      - name: Create ZIP (portable)
         run: |
           cd build/windows/x64/runner/Release
           $version = "${{ steps.version.outputs.version }}"
-          Compress-Archive -Path * -DestinationPath "../../../../../kaat-$version-windows-x64.zip"
+          Compress-Archive -Path * -DestinationPath "../../../../../kaat-$version-windows-x64-portable.zip"
 
-      - name: Upload Windows artifact
+      - name: Upload Windows artifacts
         uses: actions/upload-artifact@v4
         with:
           name: windows-x64
-          path: kaat-*-windows-x64.zip
+          path: |
+            kaat-*-windows-x64-setup.exe
+            kaat-*-windows-x64-portable.zip
 
   create-release:
     name: Create GitHub Release
