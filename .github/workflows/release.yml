@@ -363,11 +363,39 @@ jobs:
         run: |
           & "C:\Program Files (x86)\Inno Setup 6\ISCC.exe" installer.iss
 
-      - name: Create ZIP (portable)
+      - name: Create Portable Inno Setup script
         run: |
-          cd build/windows/x64/runner/Release
           $version = "${{ steps.version.outputs.version }}"
-          Compress-Archive -Path * -DestinationPath "../../../../../kaat-$version-windows-x64-portable.zip"
+          @"
+          [Setup]
+          AppName=K'aat Retro Store
+          AppVersion=$version
+          DefaultDirName={userappdata}\Kaat
+          DefaultGroupName=K'aat Retro Store
+          OutputDir=.
+          OutputBaseFilename=kaat-$version-windows-x64-portable
+          Compression=lzma2
+          SolidCompression=yes
+          ArchitecturesInstallIn64BitMode=x64
+          PrivilegesRequired=lowest
+          DisableProgramGroupPage=yes
+          DisableWelcomePage=yes
+          CreateUninstallRegKey=no
+          Uninstallable=no
+
+          [Files]
+          Source: "build\windows\x64\runner\Release\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs
+
+          [Icons]
+          Name: "{autodesktop}\K'aat Retro Store"; Filename: "{app}\kaat.exe"
+
+          [Run]
+          Filename: "{app}\kaat.exe"; Description: "Launch K'aat Retro Store"; Flags: nowait postinstall skipifsilent
+          "@ | Out-File -FilePath installer-portable.iss -Encoding ASCII
+
+      - name: Build Portable Installer
+        run: |
+          & "C:\Program Files (x86)\Inno Setup 6\ISCC.exe" installer-portable.iss
 
       - name: Upload Windows artifacts
         uses: actions/upload-artifact@v4
@@ -375,7 +403,7 @@ jobs:
           name: windows-x64
           path: |
             kaat-*-windows-x64-setup.exe
-            kaat-*-windows-x64-portable.zip
+            kaat-*-windows-x64-portable.exe
 
   create-release:
     name: Create GitHub Release
@@ -393,7 +421,10 @@ jobs:
             android-apks/*.apk
             android-apks/*.aab
             linux-x64/*.tar.gz
-            windows-x64/*.zip
+            linux-x64/*.AppImage
+            linux-x64/*.deb
+            linux-x64/*.rpm
+            windows-x64/*.exe
           draft: false
           prerelease: false
         env:
