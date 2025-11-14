@@ -51,11 +51,30 @@ jobs:
       - name: Generate localization
         run: flutter gen-l10n
 
+      - name: Get version from pubspec.yaml
+        id: version
+        run: |
+          VERSION=$(grep '^version: ' pubspec.yaml | cut -d ' ' -f 2 | cut -d '+' -f 1)
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "Version: $VERSION"
+
       - name: Build APK
         run: flutter build apk --release --split-per-abi
 
       - name: Build App Bundle
         run: flutter build appbundle --release
+
+      - name: Rename APK files
+        run: |
+          cd build/app/outputs/flutter-apk
+          mv app-arm64-v8a-release.apk kaat-${{ steps.version.outputs.version }}-arm64-v8a.apk || true
+          mv app-armeabi-v7a-release.apk kaat-${{ steps.version.outputs.version }}-armeabi-v7a.apk || true
+          mv app-x86_64-release.apk kaat-${{ steps.version.outputs.version }}-x86_64.apk || true
+
+      - name: Rename AAB file
+        run: |
+          cd build/app/outputs/bundle/release
+          mv app-release.aab kaat-${{ steps.version.outputs.version }}.aab || true
 
       - name: Upload APK artifacts
         uses: actions/upload-artifact@v4
@@ -98,21 +117,28 @@ jobs:
       - name: Generate localization
         run: flutter gen-l10n
 
+      - name: Get version from pubspec.yaml
+        id: version
+        run: |
+          VERSION=$(grep '^version: ' pubspec.yaml | cut -d ' ' -f 2 | cut -d '+' -f 1)
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "Version: $VERSION"
+
       - name: Build Linux
         run: flutter build linux --release
 
       - name: Create tarball
         run: |
           cd build/linux/x64/release/bundle
-          tar -czf ../kaat-linux-x64.tar.gz *
+          tar -czf ../kaat-${{ steps.version.outputs.version }}-linux-x64.tar.gz *
           cd ../
-          mv kaat-linux-x64.tar.gz ../../../../
+          mv kaat-${{ steps.version.outputs.version }}-linux-x64.tar.gz ../../../../
 
       - name: Upload Linux artifact
         uses: actions/upload-artifact@v4
         with:
           name: linux-x64
-          path: kaat-linux-x64.tar.gz
+          path: kaat-*-linux-x64.tar.gz
 
   build-windows:
     name: Build Windows x64
@@ -143,19 +169,27 @@ jobs:
       - name: Generate localization
         run: flutter gen-l10n
 
+      - name: Get version from pubspec.yaml
+        id: version
+        run: |
+          $version = (Select-String -Path pubspec.yaml -Pattern '^version: (.+)$').Matches.Groups[1].Value -replace '\+.*', ''
+          echo "version=$version" >> $env:GITHUB_OUTPUT
+          echo "Version: $version"
+
       - name: Build Windows
         run: flutter build windows --release
 
       - name: Create ZIP
         run: |
           cd build/windows/x64/runner/Release
-          Compress-Archive -Path * -DestinationPath ../../../../../kaat-windows-x64.zip
+          $version = "${{ steps.version.outputs.version }}"
+          Compress-Archive -Path * -DestinationPath "../../../../../kaat-$version-windows-x64.zip"
 
       - name: Upload Windows artifact
         uses: actions/upload-artifact@v4
         with:
           name: windows-x64
-          path: kaat-windows-x64.zip
+          path: kaat-*-windows-x64.zip
 
   create-release:
     name: Create GitHub Release
