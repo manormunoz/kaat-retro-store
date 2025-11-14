@@ -6,7 +6,6 @@ import 'package:get/get.dart';
 import 'package:background_downloader/background_downloader.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:get_storage/get_storage.dart';
-import 'package:path/path.dart' as p;
 import 'package:kaat/l10n/app_localizations.dart';
 import 'package:kaat/src/ui/widgets/app_snackbar/app_snackbar.dart';
 
