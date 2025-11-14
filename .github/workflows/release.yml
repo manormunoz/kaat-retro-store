@@ -361,9 +361,14 @@ jobs:
       - name: Create single-file portable with Enigma Virtual Box
         run: |
           $version = "${{ steps.version.outputs.version }}"
-          $xml = '<?xml version="1.0" encoding="utf-8"?><enigma><InputFile>build\windows\x64\runner\Release\kaat.exe</InputFile><OutputFile>kaat-' + $version + '-windows-x64-portable.exe</OutputFile><Options><CompressFiles>true</CompressFiles><ShareVirtualSystem>true</ShareVirtualSystem></Options><VirtualFiles><RecursiveAdd><Folder>build\windows\x64\runner\Release</Folder><DestinationPath>%DEFAULT FOLDER%</DestinationPath></RecursiveAdd></VirtualFiles></enigma>'
+          $currentDir = (Get-Location).Path
+          $outputPath = "$currentDir\kaat-$version-windows-x64-portable.exe"
+          $inputPath = "$currentDir\build\windows\x64\runner\Release\kaat.exe"
+          $folderPath = "$currentDir\build\windows\x64\runner\Release"
+          $xml = '<?xml version="1.0" encoding="utf-8"?><enigma><InputFile>' + $inputPath + '</InputFile><OutputFile>' + $outputPath + '</OutputFile><Options><CompressFiles>true</CompressFiles><ShareVirtualSystem>true</ShareVirtualSystem></Options><VirtualFiles><RecursiveAdd><Folder>' + $folderPath + '</Folder><DestinationPath>%DEFAULT FOLDER%</DestinationPath></RecursiveAdd></VirtualFiles></enigma>'
           $xml | Out-File -FilePath "enigma_project.evb" -Encoding UTF8
           & "C:\Program Files (x86)\Enigma Virtual Box\enigmavbconsole.exe" enigma_project.evb
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
           Remove-Item enigma_project.evb -Force
 
       - name: Upload Windows artifacts
