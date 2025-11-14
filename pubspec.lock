@@ -425,17 +425,10 @@ packages:
     dependency: transitive
     description:
       name: path_provider_android
-<<<<<<< HEAD
       sha256: "3b4c1fc3aa55ddc9cd4aa6759984330d5c8e66aa7702a6223c61540dc6380c37"
       url: "https://pub.dev"
     source: hosted
     version: "2.2.19"
-=======
-      sha256: e122c5ea805bb6773bb12ce667611265980940145be920cd09a4b0ec0285cb16
-      url: "https://pub.dev"
-    source: hosted
-    version: "2.2.20"
->>>>>>> 0401878 (chore: update dependencies in pubspec.lock to latest versions)
   path_provider_foundation:
     dependency: transitive
     description:
