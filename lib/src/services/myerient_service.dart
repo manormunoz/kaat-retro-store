@@ -30,7 +30,7 @@ class MyrientService {
       final response = await http.get(
         Uri.parse(platform['url']),
         headers: {
-          'User-Agent': 'Kaat-Retro-Store/1.0',
+          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:133.0) Gecko/20100101 Firefox/133.0',
         },
       );
 
