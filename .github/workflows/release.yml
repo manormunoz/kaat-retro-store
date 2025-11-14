@@ -224,13 +224,20 @@ jobs:
       - name: Create RPM package structure
         run: |
           VERSION=${{ steps.version.outputs.version }}
+          # Split version for RPM (remove pre-release tag)
+          RPM_VERSION=$(echo $VERSION | cut -d'-' -f1)
+          RPM_RELEASE=$(echo $VERSION | cut -d'-' -f2-)
+          if [ "$RPM_RELEASE" = "$RPM_VERSION" ]; then
+            RPM_RELEASE="1"
+          fi
+
           mkdir -p ~/rpmbuild/{BUILD,RPMS,SOURCES,SPECS,SRPMS}
 
           # Create spec file
           cat > ~/rpmbuild/SPECS/kaat.spec << EOF
           Name:           kaat
-          Version:        $VERSION
-          Release:        1%{?dist}
+          Version:        $RPM_VERSION
+          Release:        $RPM_RELEASE%{?dist}
           Summary:        K'aat Retro Store
           License:        Proprietary
           URL:            https://github.com/manormunoz/kaat-retro-store
@@ -263,7 +270,7 @@ jobs:
           /usr/share/icons/hicolor/256x256/apps/kaat.png
 
           %changelog
-          * $(date +'%a %b %d %Y') Builder <noreply@github.com> - $VERSION-1
+          * $(date +'%a %b %d %Y') Builder <noreply@github.com> - $RPM_VERSION-$RPM_RELEASE
           - Release $VERSION
           EOF
 
