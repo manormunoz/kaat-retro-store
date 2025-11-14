@@ -8,6 +8,18 @@ plugins {
     id("dev.flutter.flutter-gradle-plugin")
 }
 
+// Load keystore properties
+val keystorePropertiesFile = rootProject.file("key.properties")
+val keystoreProperties = Properties()
+if (keystorePropertiesFile.exists()) {
+    keystoreProperties.load(FileInputStream(keystorePropertiesFile))
+    println("DEBUG: Loaded key.properties from ${keystorePropertiesFile.absolutePath}")
+    println("DEBUG: storeFile = ${keystoreProperties.getProperty("storeFile")}")
+    println("DEBUG: keyAlias = ${keystoreProperties.getProperty("keyAlias")}")
+} else {
+    println("DEBUG: key.properties NOT FOUND at ${keystorePropertiesFile.absolutePath}")
+}
+
 android {
     namespace = "com.kaat.app.kaat"
     compileSdk = flutter.compileSdkVersion
@@ -20,13 +32,6 @@ android {
 
     kotlinOptions {
         jvmTarget = JavaVersion.VERSION_11.toString()
-    }
-
-    // Load keystore properties
-    val keystorePropertiesFile = rootProject.file("key.properties")
-    val keystoreProperties = Properties()
-    if (keystorePropertiesFile.exists()) {
-        keystoreProperties.load(FileInputStream(keystorePropertiesFile))
     }
 
     signingConfigs {

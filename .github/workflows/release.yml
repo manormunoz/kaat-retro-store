@@ -59,9 +59,6 @@ jobs:
       - name: Build APK
         run: flutter build apk --release --split-per-abi
 
-      - name: Build App Bundle
-        run: flutter build appbundle --release
-
       - name: Rename APK files
         run: |
           cd build/app/outputs/flutter-apk
@@ -69,18 +66,11 @@ jobs:
           mv app-armeabi-v7a-release.apk kaat-${{ steps.version.outputs.version }}-armeabi-v7a.apk || true
           mv app-x86_64-release.apk kaat-${{ steps.version.outputs.version }}-x86_64.apk || true
 
-      - name: Rename AAB file
-        run: |
-          cd build/app/outputs/bundle/release
-          mv app-release.aab kaat-${{ steps.version.outputs.version }}.aab || true
-
       - name: Upload APK artifacts
         uses: actions/upload-artifact@v4
         with:
           name: android-apks
-          path: |
-            build/app/outputs/flutter-apk/*.apk
-            build/app/outputs/bundle/release/*.aab
+          path: build/app/outputs/flutter-apk/*.apk
 
   build-linux:
     name: Build Linux x64
@@ -363,39 +353,18 @@ jobs:
         run: |
           & "C:\Program Files (x86)\Inno Setup 6\ISCC.exe" installer.iss
 
-      - name: Create Portable Inno Setup script
+      - name: Download Enigma Virtual Box
+        run: |
+          Invoke-WebRequest -Uri "https://enigmaprotector.com/assets/files/enigmavb.exe" -OutFile "enigmavb_setup.exe"
+          Start-Process -FilePath "enigmavb_setup.exe" -ArgumentList "/VERYSILENT /SUPPRESSMSGBOXES /NORESTART /SP-" -Wait
+
+      - name: Create single-file portable with Enigma Virtual Box
         run: |
           $version = "${{ steps.version.outputs.version }}"
-          @"
-          [Setup]
-          AppName=K'aat Retro Store
-          AppVersion=$version
-          DefaultDirName={userappdata}\Kaat
-          DefaultGroupName=K'aat Retro Store
-          OutputDir=.
-          OutputBaseFilename=kaat-$version-windows-x64-portable
-          Compression=lzma2
-          SolidCompression=yes
-          ArchitecturesInstallIn64BitMode=x64
-          PrivilegesRequired=lowest
-          DisableProgramGroupPage=yes
-          DisableWelcomePage=yes
-          CreateUninstallRegKey=no
-          Uninstallable=no
-
-          [Files]
-          Source: "build\windows\x64\runner\Release\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs
-
-          [Icons]
-          Name: "{autodesktop}\K'aat Retro Store"; Filename: "{app}\kaat.exe"
-
-          [Run]
-          Filename: "{app}\kaat.exe"; Description: "Launch K'aat Retro Store"; Flags: nowait postinstall skipifsilent
-          "@ | Out-File -FilePath installer-portable.iss -Encoding ASCII
-
-      - name: Build Portable Installer
-        run: |
-          & "C:\Program Files (x86)\Inno Setup 6\ISCC.exe" installer-portable.iss
+          $xml = '<?xml version="1.0" encoding="utf-8"?><enigma><InputFile>build\windows\x64\runner\Release\kaat.exe</InputFile><OutputFile>kaat-' + $version + '-windows-x64-portable.exe</OutputFile><Options><CompressFiles>true</CompressFiles><ShareVirtualSystem>true</ShareVirtualSystem></Options><VirtualFiles><RecursiveAdd><Folder>build\windows\x64\runner\Release</Folder><DestinationPath>%DEFAULT FOLDER%</DestinationPath></RecursiveAdd></VirtualFiles></enigma>'
+          $xml | Out-File -FilePath "enigma_project.evb" -Encoding UTF8
+          & "C:\Program Files (x86)\Enigma Virtual Box\enigmavbconsole.exe" enigma_project.evb
+          Remove-Item enigma_project.evb -Force
 
       - name: Upload Windows artifacts
         uses: actions/upload-artifact@v4
@@ -419,7 +388,6 @@ jobs:
         with:
           files: |
             android-apks/*.apk
-            android-apks/*.aab
             linux-x64/*.tar.gz
             linux-x64/*.AppImage
             linux-x64/*.deb
