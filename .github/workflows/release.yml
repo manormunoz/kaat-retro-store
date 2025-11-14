@@ -165,7 +165,7 @@ jobs:
 
       - name: Build AppImage
         run: |
-          ARCH=x86_64 ./appimagetool-x86_64.AppImage AppDir kaat-${{ steps.version.outputs.version }}-x86_64.AppImage
+          ARCH=x86_64 ./appimagetool-x86_64.AppImage --no-appstream AppDir kaat-${{ steps.version.outputs.version }}-x86_64.AppImage
 
       - name: Create tarball (portable)
         run: |
