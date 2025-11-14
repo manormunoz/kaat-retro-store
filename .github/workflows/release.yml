@@ -177,6 +177,102 @@ jobs:
           cd ../
           mv kaat-${{ steps.version.outputs.version }}-linux-x64.tar.gz ../../../../
 
+      - name: Install DEB/RPM packaging tools
+        run: |
+          sudo apt-get install -y rpm
+
+      - name: Create DEB package structure
+        run: |
+          VERSION=${{ steps.version.outputs.version }}
+          mkdir -p debian-package/usr/bin
+          mkdir -p debian-package/usr/share/applications
+          mkdir -p debian-package/usr/share/icons/hicolor/256x256/apps
+          mkdir -p debian-package/DEBIAN
+
+          # Copy files
+          cp -r build/linux/x64/release/bundle/* debian-package/usr/bin/
+          cp android/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png debian-package/usr/share/icons/hicolor/256x256/apps/kaat.png
+
+          # Create desktop file
+          cat > debian-package/usr/share/applications/kaat.desktop << EOF
+          [Desktop Entry]
+          Name=K'aat Retro Store
+          Exec=/usr/bin/kaat
+          Icon=kaat
+          Type=Application
+          Categories=Game;
+          Comment=Browse and download retro game ROMs
+          EOF
+
+          # Create control file
+          cat > debian-package/DEBIAN/control << EOF
+          Package: kaat
+          Version: $VERSION
+          Section: games
+          Priority: optional
+          Architecture: amd64
+          Maintainer: K'aat Retro Store <noreply@github.com>
+          Description: K'aat Retro Store
+           Browse and download retro game ROMs with boxarts and metadata
+          EOF
+
+      - name: Build DEB package
+        run: |
+          VERSION=${{ steps.version.outputs.version }}
+          dpkg-deb --build debian-package kaat-$VERSION-amd64.deb
+
+      - name: Create RPM package structure
+        run: |
+          VERSION=${{ steps.version.outputs.version }}
+          mkdir -p ~/rpmbuild/{BUILD,RPMS,SOURCES,SPECS,SRPMS}
+
+          # Create spec file
+          cat > ~/rpmbuild/SPECS/kaat.spec << EOF
+          Name:           kaat
+          Version:        $VERSION
+          Release:        1%{?dist}
+          Summary:        K'aat Retro Store
+          License:        Proprietary
+          URL:            https://github.com/manormunoz/kaat-retro-store
+
+          %description
+          Browse and download retro game ROMs with boxarts and metadata
+
+          %install
+          rm -rf %{buildroot}
+          mkdir -p %{buildroot}/usr/bin
+          mkdir -p %{buildroot}/usr/share/applications
+          mkdir -p %{buildroot}/usr/share/icons/hicolor/256x256/apps
+
+          cp -r $PWD/build/linux/x64/release/bundle/* %{buildroot}/usr/bin/
+          cp $PWD/android/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png %{buildroot}/usr/share/icons/hicolor/256x256/apps/kaat.png
+
+          cat > %{buildroot}/usr/share/applications/kaat.desktop << 'DESKTOP'
+          [Desktop Entry]
+          Name=K'aat Retro Store
+          Exec=/usr/bin/kaat
+          Icon=kaat
+          Type=Application
+          Categories=Game;
+          Comment=Browse and download retro game ROMs
+          DESKTOP
+
+          %files
+          /usr/bin/*
+          /usr/share/applications/kaat.desktop
+          /usr/share/icons/hicolor/256x256/apps/kaat.png
+
+          %changelog
+          * $(date +'%a %b %d %Y') Builder <noreply@github.com> - $VERSION-1
+          - Release $VERSION
+          EOF
+
+      - name: Build RPM package
+        run: |
+          cd ~/rpmbuild
+          rpmbuild -bb SPECS/kaat.spec
+          cp RPMS/x86_64/*.rpm $GITHUB_WORKSPACE/
+
       - name: Upload Linux artifacts
         uses: actions/upload-artifact@v4
         with:
@@ -184,6 +280,8 @@ jobs:
           path: |
             kaat-*-x86_64.AppImage
             kaat-*-linux-x64.tar.gz
+            kaat-*-amd64.deb
+            kaat-*.rpm
 
   build-windows:
     name: Build Windows x64
