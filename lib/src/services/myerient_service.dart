@@ -1,5 +1,7 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:http/io_client.dart';
 import 'package:html/parser.dart' as html_parser;
 
 class MyrientService {
@@ -7,6 +9,18 @@ class MyrientService {
   static final MyrientService _instance = MyrientService._internal();
   factory MyrientService() => _instance;
   MyrientService._internal();
+
+  // Create a custom HTTP client that handles SSL certificates properly on Windows
+  http.Client _createHttpClient() {
+    final ioClient = HttpClient();
+    // Allow bad certificates (Myrient uses Let's Encrypt which should be fine, but just in case)
+    ioClient.badCertificateCallback = (X509Certificate cert, String host, int port) {
+      debugPrint("Certificate warning for $host:$port");
+      // Only accept certificates from myrient.erista.me
+      return host == 'myrient.erista.me';
+    };
+    return IOClient(ioClient);
+  }
 
   String removeFileExtension(String fileName) {
     final dotIndex = fileName.lastIndexOf('.');
@@ -22,18 +36,31 @@ class MyrientService {
     Map<String, dynamic> platform,
   ) async {
     final List<Map<String, dynamic>> roms = [];
+    final client = _createHttpClient();
 
     try {
-      final response = await http.get(Uri.parse(platform['url']));
+      debugPrint("MyrientService: Requesting URL: ${platform['url']}");
+      debugPrint("MyrientService: Platform: ${platform['platform_abbr']}");
+
+      final response = await client.get(
+        Uri.parse(platform['url']),
+        headers: {
+          'User-Agent': 'Kaat-Retro-Store/1.0',
+        },
+      );
+
+      debugPrint("MyrientService: HTTP Status: ${response.statusCode}");
+      debugPrint("MyrientService: Response body length: ${response.body.length}");
+
       if (response.statusCode != 200) {
-        throw Exception('Failed to load Myrient URL');
+        throw Exception('Failed to load Myrient URL: HTTP ${response.statusCode}');
       }
 
       // Parse HTML
       final document = html_parser.parse(response.body);
       // Find all <a> tags inside the listing
       final rows = document.querySelectorAll('table tbody tr');
-      debugPrint(rows.length.toString());
+      debugPrint("MyrientService: Found ${rows.length} table rows");
 
       for (final row in rows) {
         final link = row.querySelector('td.link a');
@@ -66,8 +93,13 @@ class MyrientService {
           'platformAbbr': platform['platform_abbr'],
         });
       }
-    } catch (e) {
-      debugPrint("Error parsing Myrient index: $e");
+
+      debugPrint("MyrientService: Successfully parsed ${roms.length} ROMs");
+    } catch (e, stackTrace) {
+      debugPrint("MyrientService ERROR: $e");
+      debugPrint("MyrientService STACK TRACE: $stackTrace");
+    } finally {
+      client.close();
     }
 
     return roms;
