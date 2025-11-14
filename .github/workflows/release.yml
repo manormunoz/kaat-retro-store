@@ -141,6 +141,9 @@ jobs:
           mkdir -p AppDir/usr/lib
           cp -r build/linux/x64/release/bundle/* AppDir/usr/bin/
 
+          # Copy icon from Android resources
+          cp android/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png AppDir/kaat.png
+
           # Create desktop file
           cat > AppDir/kaat.desktop << EOF
           [Desktop Entry]
