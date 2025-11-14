@@ -353,23 +353,10 @@ jobs:
         run: |
           & "C:\Program Files (x86)\Inno Setup 6\ISCC.exe" installer.iss
 
-      - name: Download Enigma Virtual Box
-        run: |
-          Invoke-WebRequest -Uri "https://enigmaprotector.com/assets/files/enigmavb.exe" -OutFile "enigmavb_setup.exe"
-          Start-Process -FilePath "enigmavb_setup.exe" -ArgumentList "/VERYSILENT /SUPPRESSMSGBOXES /NORESTART /SP-" -Wait
-
-      - name: Create single-file portable with Enigma Virtual Box
+      - name: Create portable ZIP
         run: |
           $version = "${{ steps.version.outputs.version }}"
-          $currentDir = (Get-Location).Path
-          $outputPath = "$currentDir\kaat-$version-windows-x64-portable.exe"
-          $inputPath = "$currentDir\build\windows\x64\runner\Release\kaat.exe"
-          $folderPath = "$currentDir\build\windows\x64\runner\Release"
-          $xml = '<?xml version="1.0" encoding="utf-8"?><enigma><InputFile>' + $inputPath + '</InputFile><OutputFile>' + $outputPath + '</OutputFile><Options><CompressFiles>true</CompressFiles><ShareVirtualSystem>true</ShareVirtualSystem></Options><VirtualFiles><RecursiveAdd><Folder>' + $folderPath + '</Folder><DestinationPath>%DEFAULT FOLDER%</DestinationPath></RecursiveAdd></VirtualFiles></enigma>'
-          $xml | Out-File -FilePath "enigma_project.evb" -Encoding UTF8
-          & "C:\Program Files (x86)\Enigma Virtual Box\enigmavbconsole.exe" enigma_project.evb
-          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
-          Remove-Item enigma_project.evb -Force
+          Compress-Archive -Path "build/windows/x64/runner/Release/*" -DestinationPath "kaat-$version-windows-x64-portable.zip"
 
       - name: Upload Windows artifacts
         uses: actions/upload-artifact@v4
@@ -377,7 +364,7 @@ jobs:
           name: windows-x64
           path: |
             kaat-*-windows-x64-setup.exe
-            kaat-*-windows-x64-portable.exe
+            kaat-*-windows-x64-portable.zip
 
   create-release:
     name: Create GitHub Release
@@ -398,6 +385,7 @@ jobs:
             linux-x64/*.deb
             linux-x64/*.rpm
             windows-x64/*.exe
+            windows-x64/*.zip
           draft: false
           prerelease: false
         env:
