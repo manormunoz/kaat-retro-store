@@ -34,13 +34,13 @@ class RoutePages {
       ),
       GetPage(
         name: RouteNames.home,
-        page: () => const HomePage(),
+        page: () => HomePage(),
         binding: const HomeBinding(),
         transition: Transition.cupertino,
       ),
       GetPage(
         name: RouteNames.romsList,
-        page: () => const RomsListPage(),
+        page: () => RomsListPage(),
         binding: const RomsListBinding(),
         transition: Transition.cupertino,
       ),

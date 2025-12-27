@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'dart:math' as math;
 import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
@@ -19,6 +20,12 @@ class RomsListController extends GetxController {
   var loading = true.obs;
   final searchText = ''.obs;
   final searchCtrl = TextEditingController();
+  final focusedIndex = (-1).obs;
+  final scrollController = ScrollController();
+  bool useGridLayout = false;
+  int layoutCrossAxisCount = 1;
+  double layoutItemExtent = 260;
+  double layoutMainSpacing = 10;
   Worker? _debouncer;
   final _box = GetStorage();
 
@@ -38,6 +45,7 @@ class RomsListController extends GetxController {
   @override
   void onClose() {
     _debouncer?.dispose();
+    scrollController.dispose();
     super.onClose();
   }
 
@@ -90,6 +98,7 @@ class RomsListController extends GetxController {
         allRoms.assignAll(list);
       }
       roms.assignAll(allRoms);
+      _syncFocusWithRoms();
     } catch (e) {
       debugPrint("loadRomsList Error: $e");
     } finally {
@@ -113,6 +122,7 @@ class RomsListController extends GetxController {
     final q = _normalize(searchText.value);
     if (q.isEmpty) {
       roms.assignAll(allRoms);
+      _syncFocusWithRoms();
       return;
     }
     roms.assignAll(
@@ -123,6 +133,7 @@ class RomsListController extends GetxController {
         return name.contains(q) || (rom.isNotEmpty && rom.contains(q));
       }),
     );
+    _syncFocusWithRoms();
   }
 
   String clearGameName(String fileName) {
@@ -138,6 +149,71 @@ class RomsListController extends GetxController {
 
     name = name.replaceAll(RegExp(r'\s+'), ' ').trim();
     return name;
+  }
+
+  void moveFocus(int delta, int itemCount) {
+    if (itemCount <= 0) {
+      focusedIndex.value = -1;
+      return;
+    }
+    final current = focusedIndex.value == -1
+        ? 0
+        : focusedIndex.value.clamp(0, itemCount - 1);
+    final next = (current + delta).clamp(0, itemCount - 1);
+    focusedIndex.value = next.toInt();
+    _scrollToFocused();
+  }
+
+  void setFocusIndex(int index, int itemCount) {
+    if (itemCount <= 0) {
+      focusedIndex.value = -1;
+      return;
+    }
+    final next = index.clamp(0, itemCount - 1).toInt();
+    focusedIndex.value = next;
+    _scrollToFocused();
+  }
+
+  void updateLayoutMetrics({
+    required bool useGrid,
+    required int crossAxisCount,
+    required double itemExtent,
+    required double mainSpacing,
+  }) {
+    useGridLayout = useGrid;
+    layoutCrossAxisCount = crossAxisCount;
+    layoutItemExtent = itemExtent;
+    layoutMainSpacing = mainSpacing;
+  }
+
+  void _scrollToFocused() {
+    final idx = focusedIndex.value;
+    if (idx < 0) return;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!scrollController.hasClients) return;
+      final columns = math.max(1, layoutCrossAxisCount);
+      final row = useGridLayout ? (idx ~/ columns) : idx;
+      final base = row * (layoutItemExtent + layoutMainSpacing);
+      final viewport =
+          scrollController.position.hasViewportDimension ? scrollController.position.viewportDimension : 0.0;
+      final targetOffset = math.max(0.0, base - viewport * 0.3);
+      scrollController.animateTo(
+        targetOffset,
+        duration: const Duration(milliseconds: 200),
+        curve: Curves.easeInOut,
+      );
+    });
+  }
+
+  void _syncFocusWithRoms() {
+    final itemCount = roms.length;
+    if (itemCount == 0) {
+      focusedIndex.value = -1;
+      return;
+    }
+    if (focusedIndex.value >= itemCount) {
+      focusedIndex.value = itemCount - 1;
+    }
   }
 
   Future<Game> screenScrapper(String name, int systemId) async {
