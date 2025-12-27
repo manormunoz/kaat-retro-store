@@ -1,10 +1,12 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'package:path/path.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:yaml/yaml.dart';
 
 class DbService {
@@ -44,17 +46,45 @@ class DbService {
   }
 
   Future<Database> initDb() async {
-    final dbPath = await _databaseFactory.getDatabasesPath();
-    final path = join(dbPath, 'kaat_db.db');
-    final db = await _databaseFactory.openDatabase(
-      path,
-      options: OpenDatabaseOptions(version: 1, onCreate: _onCreate),
-    );
-    // await dropTables(db);
-    // await _onCreate(db, 1);
-    // debugListTables(db);
-    _isReady = true;
-    return db;
+    try {
+      // Use application support directory for better cross-platform support
+      String dbPath;
+      if (defaultTargetPlatform == TargetPlatform.windows ||
+          defaultTargetPlatform == TargetPlatform.linux) {
+        final appSupportDir = await getApplicationSupportDirectory();
+        dbPath = appSupportDir.path;
+        debugPrint('📁 Database path (desktop): $dbPath');
+
+        // Ensure directory exists
+        final directory = Directory(dbPath);
+        if (!await directory.exists()) {
+          await directory.create(recursive: true);
+          debugPrint('✅ Created database directory');
+        }
+      } else {
+        dbPath = await _databaseFactory.getDatabasesPath();
+        debugPrint('📁 Database path (mobile): $dbPath');
+      }
+
+      final path = join(dbPath, 'kaat_db.db');
+      debugPrint('📄 Full database path: $path');
+
+      final db = await _databaseFactory.openDatabase(
+        path,
+        options: OpenDatabaseOptions(version: 1, onCreate: _onCreate),
+      );
+
+      debugPrint('✅ Database opened successfully');
+      // await dropTables(db);
+      // await _onCreate(db, 1);
+      // debugListTables(db);
+      _isReady = true;
+      return db;
+    } catch (e, stackTrace) {
+      debugPrint('❌ Error initializing database: $e');
+      debugPrint('Stack trace: $stackTrace');
+      rethrow;
+    }
   }
 
   List<Map<String, dynamic>> _decodeRoms(String jsonString) {
@@ -110,107 +140,141 @@ class DbService {
   }
 
   Future<void> loadPlatformsFromYaml(Database db) async {
-    final countResult = await db.rawQuery(
-      'SELECT COUNT(*) as count FROM platforms',
-    );
-    final count = Sqflite.firstIntValue(countResult) ?? 0;
+    try {
+      debugPrint('📥 Loading platforms from YAML...');
+      final countResult = await db.rawQuery(
+        'SELECT COUNT(*) as count FROM platforms',
+      );
+      final count = Sqflite.firstIntValue(countResult) ?? 0;
+      debugPrint('📊 Current platforms count: $count');
 
-    final yamlString = await rootBundle.loadString(
-      'assets/config/platforms.yaml',
-    );
+      debugPrint('📄 Loading assets/config/platforms.yaml...');
+      final yamlString = await rootBundle.loadString(
+        'assets/config/platforms.yaml',
+      );
+      debugPrint('✅ YAML file loaded, size: ${yamlString.length} bytes');
 
-    final yamlMap = loadYaml(yamlString);
-    final yamlJson = json.decode(json.encode(yamlMap));
-    final yamlList = Map<String, dynamic>.from(yamlJson);
-    if (count == yamlList.length) {
-      debugPrint("ℹ️ Platforms has data, not initilezed");
-      return;
-    } else {
-      await db.execute('DELETE FROM platforms');
+      final yamlMap = loadYaml(yamlString);
+      final yamlJson = json.decode(json.encode(yamlMap));
+      final yamlList = Map<String, dynamic>.from(yamlJson);
+      debugPrint('📋 Platforms in YAML: ${yamlList.length}');
+
+      if (count == yamlList.length) {
+        debugPrint("ℹ️ Platforms has data, not initialized");
+        return;
+      } else {
+        await db.execute('DELETE FROM platforms');
+        debugPrint('🗑️ Cleared existing platforms');
+      }
+
+      for (final item in yamlList.entries) {
+        final platform = item.value as Map<String, dynamic>;
+        await db.insert(
+            'platforms',
+            {
+              'name': platform['platform_name'],
+              'abbr': platform['platform_abbr'],
+              'logo': platform['platform_logo'],
+              'url': platform['url'],
+              'boxarts': platform['roms_boxarts'],
+              'romsLogos': platform['roms_logos'],
+              'ssSystemId': platform['ssSystemId'],
+            },
+            conflictAlgorithm: ConflictAlgorithm.replace);
+      }
+
+      debugPrint("✅ Platforms initialized (${yamlList.length} items)");
+    } catch (e, stackTrace) {
+      debugPrint('❌ Error loading platforms: $e');
+      debugPrint('Stack trace: $stackTrace');
+      rethrow;
     }
-    for (final item in yamlList.entries) {
-      final platform = item.value as Map<String, dynamic>;
-      await db.insert(
-          'platforms',
-          {
-            'name': platform['platform_name'],
-            'abbr': platform['platform_abbr'],
-            'logo': platform['platform_logo'],
-            'url': platform['url'],
-            'boxarts': platform['roms_boxarts'],
-            'romsLogos': platform['roms_logos'],
-            'ssSystemId': platform['ssSystemId'],
-          },
-          conflictAlgorithm: ConflictAlgorithm.replace);
-    }
-
-    debugPrint("✅ Platforms initialized");
   }
 
   Future<void> loadMameRomsFromJson(Database db) async {
-    final mamePlarform = await db.rawQuery(
-      'SELECT * FROM platforms WHERE abbr=?',
-      ['mame'],
-    );
-    final platformId = mamePlarform.first['id'] as int;
-    debugPrint(platformId.toString());
-    final countResult = await db.rawQuery(
-      'SELECT COUNT(*) as count FROM roms WHERE platformId=?',
-      [platformId],
-    );
-    final count = Sqflite.firstIntValue(countResult) ?? 0;
-    if (count > 0) {
-      debugPrint("ℹ️ Roms has data, not initilized");
-      return;
-    }
+    try {
+      debugPrint('📥 Loading MAME ROMs from JSON...');
+      final mamePlarform = await db.rawQuery(
+        'SELECT * FROM platforms WHERE abbr=?',
+        ['mame'],
+      );
 
-    final jsonString = await rootBundle.loadString('assets/data/mame.json');
-    // final List<dynamic> romsList = json.decode(jsonString);
-    final romsList = await compute(_decodeRoms, jsonString);
-    debugPrint('MAME LIST LENGTH ${romsList.length.toString()}');
-    const chunk = 500;
-    int i = 0;
-    while (i < romsList.length) {
-      final end = (i + chunk).clamp(0, romsList.length);
-      final slice = romsList.sublist(i, end);
-      debugPrint("✅ MAME roms initialized i: $i end: $end}");
+      if (mamePlarform.isEmpty) {
+        debugPrint('❌ MAME platform not found in database');
+        return;
+      }
 
-      await db.transaction((txn) async {
-        final batch = txn.batch();
-        for (final rom in slice) {
-          final romName = rom['rom']?.toString().trim();
-          final title = rom['name']?.toString().trim();
-          if (romName == null ||
-              romName.isEmpty ||
-              title == null ||
-              title.isEmpty) {
-            continue;
+      final platformId = mamePlarform.first['id'] as int;
+      debugPrint('🎮 MAME platform ID: $platformId');
+
+      final countResult = await db.rawQuery(
+        'SELECT COUNT(*) as count FROM roms WHERE platformId=?',
+        [platformId],
+      );
+      final count = Sqflite.firstIntValue(countResult) ?? 0;
+      debugPrint('📊 Current MAME ROMs count: $count');
+
+      if (count > 0) {
+        debugPrint("ℹ️ Roms has data, not initialized");
+        return;
+      }
+
+      debugPrint('📄 Loading assets/data/mame.json...');
+      final jsonString = await rootBundle.loadString('assets/data/mame.json');
+      debugPrint('✅ JSON file loaded, size: ${jsonString.length} bytes');
+
+      // final List<dynamic> romsList = json.decode(jsonString);
+      final romsList = await compute(_decodeRoms, jsonString);
+      debugPrint('📋 MAME ROMs in JSON: ${romsList.length}');
+
+      const chunk = 500;
+      int i = 0;
+      while (i < romsList.length) {
+        final end = (i + chunk).clamp(0, romsList.length);
+        final slice = romsList.sublist(i, end);
+        debugPrint("✅ MAME roms initialized i: $i end: $end}");
+
+        await db.transaction((txn) async {
+          final batch = txn.batch();
+          for (final rom in slice) {
+            final romName = rom['rom']?.toString().trim();
+            final title = rom['name']?.toString().trim();
+            if (romName == null ||
+                romName.isEmpty ||
+                title == null ||
+                title.isEmpty) {
+              continue;
+            }
+            batch.insert(
+                'roms',
+                {
+                  'rom': romName,
+                  'title': title,
+                  'year': rom['year'],
+                  'publisher': rom['manufacturer'],
+                  'platformId': platformId,
+                },
+                conflictAlgorithm: ConflictAlgorithm.ignore);
           }
-          batch.insert(
-              'roms',
-              {
-                'rom': romName,
-                'title': title,
-                'year': rom['year'],
-                'publisher': rom['manufacturer'],
-                'platformId': platformId,
-              },
-              conflictAlgorithm: ConflictAlgorithm.ignore);
-        }
-        await batch.commit(noResult: true);
-      });
-      i = end;
-      // cede el control al event loop para que iOS no sienta “freeze”
-      await Future.delayed(const Duration(milliseconds: 1));
-    }
+          await batch.commit(noResult: true);
+        });
+        i = end;
+        // cede el control al event loop para que iOS no sienta "freeze"
+        await Future.delayed(const Duration(milliseconds: 1));
+      }
 
-    debugPrint("✅ MAME All roms initialized");
-    final countAfterResult = await db.rawQuery(
-      'SELECT COUNT(*) as count FROM roms WHERE platformId=?',
-      [platformId],
-    );
-    final countAfter = Sqflite.firstIntValue(countAfterResult) ?? 0;
-    debugPrint("${countAfter.toString()} MAME data roms inserted");
+      debugPrint("✅ MAME All roms initialized");
+      final countAfterResult = await db.rawQuery(
+        'SELECT COUNT(*) as count FROM roms WHERE platformId=?',
+        [platformId],
+      );
+      final countAfter = Sqflite.firstIntValue(countAfterResult) ?? 0;
+      debugPrint("${countAfter.toString()} MAME data roms inserted");
+    } catch (e, stackTrace) {
+      debugPrint('❌ Error loading MAME ROMs: $e');
+      debugPrint('Stack trace: $stackTrace');
+      rethrow;
+    }
     // for (final rom in romsList) {
     //   final romName = rom['rom']?.toString().trim();
     //   final title = rom['name']?.toString().trim();
