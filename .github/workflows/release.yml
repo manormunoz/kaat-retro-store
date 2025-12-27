@@ -341,13 +341,15 @@ jobs:
           SolidCompression=yes
           ArchitecturesInstallIn64BitMode=x64
           PrivilegesRequired=admin
+          SetupIconFile=windows\runner\resources\app_icon.ico
+          UninstallDisplayIcon={app}\kaat.exe
 
           [Files]
           Source: "build\windows\x64\runner\Release\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs
 
           [Icons]
-          Name: "{group}\K'aat Retro Store"; Filename: "{app}\kaat.exe"
-          Name: "{autodesktop}\K'aat Retro Store"; Filename: "{app}\kaat.exe"
+          Name: "{group}\K'aat Retro Store"; Filename: "{app}\kaat.exe"; IconFilename: "{app}\kaat.exe"
+          Name: "{autodesktop}\K'aat Retro Store"; Filename: "{app}\kaat.exe"; IconFilename: "{app}\kaat.exe"
 
           [Run]
           Filename: "{app}\kaat.exe"; Description: "Launch K'aat Retro Store"; Flags: nowait postinstall skipifsilent
